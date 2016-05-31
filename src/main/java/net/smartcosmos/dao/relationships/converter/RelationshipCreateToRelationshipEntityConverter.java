@@ -25,10 +25,10 @@ public class RelationshipCreateToRelationshipEntityConverter
         return RelationshipEntity.builder()
                 // Required
                 .entityReferenceType(relationshipCreate.getEntityReferenceType())
-                .referenceUrn(relationshipCreate.getReferenceUrn())
+                .referenceId(UuidUtil.getUuidFromUrn(relationshipCreate.getReferenceUrn()))
                 .type(relationshipCreate.getType())
                 .relatedEntityReferenceType(relationshipCreate.getRelatedEntityReferenceType())
-                .relatedReferenceUrn(relationshipCreate.getRelatedReferenceUrn())
+                .relatedReferenceId(UuidUtil.getUuidFromUrn(relationshipCreate.getRelatedReferenceUrn()))
                 .accountId(UuidUtil.getUuidFromAccountUrn(user.getAccountUrn()))
                 // Optional
                 .moniker(relationshipCreate.getMoniker()).build();

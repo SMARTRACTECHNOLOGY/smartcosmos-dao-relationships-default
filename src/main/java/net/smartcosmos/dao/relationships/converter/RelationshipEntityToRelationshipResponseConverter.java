@@ -26,10 +26,10 @@ public class RelationshipEntityToRelationshipResponseConverter
         return RelationshipResponse.builder()
                 // Required
                 .entityReferenceType(entity.getEntityReferenceType())
-                .referenceUrn(entity.getReferenceUrn())
+                .referenceUrn(UuidUtil.getUrnFromUuid(entity.getReferenceId()))
                 .type(entity.getType())
                 .relatedEntityReferenceType(entity.getRelatedEntityReferenceType())
-                .relatedReferenceUrn(entity.getRelatedReferenceUrn())
+                .relatedReferenceUrn(UuidUtil.getUrnFromUuid(entity.getRelatedReferenceId()))
                 .urn(UuidUtil.getUrnFromUuid(entity.getId()))
                 .accountUrn(UuidUtil.getAccountUrnFromUuid(entity.getAccountId()))
                 // Optional
