@@ -16,11 +16,5 @@ public interface RelationshipRepository extends
         QueryByExampleExecutor<RelationshipEntity>,
         JpaSpecificationExecutor<RelationshipEntity>
 {
-
-    Optional<RelationshipEntity> findByAccountIdAndObjectUrn(UUID accountId, String objectUrn);
-
     Optional<RelationshipEntity> findByAccountIdAndId(UUID accountId, UUID id);
-
-    List<RelationshipEntity> findByAccountIdAndObjectUrnStartsWith(UUID accountId, String objectUrn);
-
 }
