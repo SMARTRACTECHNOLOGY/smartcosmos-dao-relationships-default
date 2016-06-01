@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 
 /**
@@ -121,18 +122,9 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        relationshipPersistenceService.create(accountUrn, relationshipCreate);
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
 
-        RelationshipLookupSpecific relationshipLookupSpecific = RelationshipLookupSpecific.builder()
-            .entityReferenceType(TEST_REFERENCE_TYPE)
-            .referenceUrn(TEST_ENTITY)
-            .type(TEST_RELATIONSHIP_TYPE)
-            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
-            .relatedReferenceUrn(TEST_RELATED_ENTITY)
-            .build();
-
-        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService
-            .findSpecific(accountUrn, relationshipLookupSpecific);
+        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
 
         assertTrue(relationshipResponse.isPresent());
         assertEquals(TEST_REFERENCE_TYPE, relationshipResponse.get().getEntityReferenceType());
@@ -160,9 +152,18 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+        relationshipPersistenceService.create(accountUrn, relationshipCreate);
 
-        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
+        RelationshipLookupSpecific relationshipLookupSpecific = RelationshipLookupSpecific.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type(TEST_RELATIONSHIP_TYPE)
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
+            .build();
+
+        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService
+            .findSpecific(accountUrn, relationshipLookupSpecific);
 
         assertTrue(relationshipResponse.isPresent());
         assertEquals(TEST_REFERENCE_TYPE, relationshipResponse.get().getEntityReferenceType());
@@ -175,7 +176,30 @@ public class RelationshipPersistanceServiceTest {
 
     @Test
     public void testDelete() {
+        final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_REFERENCE_TYPE = "Thing";
+        final String TEST_RELATIONSHIP_TYPE = "Found by URN";
+        final String TEST_MONIKER = "Moniker";
 
+        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type(TEST_RELATIONSHIP_TYPE)
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
+            .moniker(TEST_MONIKER)
+            .build();
+
+        Optional<RelationshipResponse> relationshipResponse;
+
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+
+        assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
+
+        relationshipPersistenceService.delete(accountUrn, urn);
+
+        assertFalse(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
     }
 
     @Test
