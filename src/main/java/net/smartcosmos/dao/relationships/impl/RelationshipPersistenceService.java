@@ -6,6 +6,7 @@ import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
 import net.smartcosmos.dto.relationships.RelationshipCreate;
+import net.smartcosmos.dto.relationships.RelationshipLookupSpecific;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
 import net.smartcosmos.util.UuidUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -62,7 +63,34 @@ public class RelationshipPersistenceService implements RelationshipDao {
             return Optional.ofNullable(response);
         }
         return Optional.empty();
+    }
 
+    @Override
+    public Optional<RelationshipResponse> findSpecific(
+            String accountUrn,
+            RelationshipLookupSpecific relationshipLookupSpecific) throws ConstraintViolationException {
+
+        Optional<RelationshipEntity> entity = Optional.empty();
+
+        try {
+            entity = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+                UuidUtil.getUuidFromAccountUrn(accountUrn),
+                relationshipLookupSpecific.getEntityReferenceType(),
+                UuidUtil.getUuidFromUrn(relationshipLookupSpecific.getReferenceUrn()),
+                relationshipLookupSpecific.getType(),
+                relationshipLookupSpecific.getRelatedEntityReferenceType(),
+                UuidUtil.getUuidFromUrn(relationshipLookupSpecific.getRelatedReferenceUrn()));
+        } catch (IllegalArgumentException e) {
+            // Optional.empty() will be returned anyway
+            log.warn("Illegal relationshipLookupSpecific submitted by account %s", accountUrn);
+        }
+
+        if (entity.isPresent()) {
+            final RelationshipResponse response = conversionService.convert(entity.get(),
+                RelationshipResponse.class);
+            return Optional.ofNullable(response);
+        }
+        return Optional.empty();
     }
 
     @Override

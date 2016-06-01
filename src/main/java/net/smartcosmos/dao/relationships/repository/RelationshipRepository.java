@@ -17,4 +17,12 @@ public interface RelationshipRepository extends
         JpaSpecificationExecutor<RelationshipEntity>
 {
     Optional<RelationshipEntity> findByAccountIdAndId(UUID accountId, UUID id);
+
+    Optional<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+        UUID accountId,
+        String entityReferenceType,
+        UUID referenceId,
+        String type,
+        String relatedEntityReferenceType,
+        UUID relatedReferenceId);
 }
