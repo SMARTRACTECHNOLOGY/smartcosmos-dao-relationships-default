@@ -6,6 +6,7 @@ import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dto.relationships.RelationshipCreate;
 import net.smartcosmos.dto.relationships.RelationshipLookupSpecific;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
+import net.smartcosmos.dto.relationships.RelationshipUpdateMoniker;
 import net.smartcosmos.security.user.SmartCosmosUser;
 import net.smartcosmos.util.UuidUtil;
 import org.junit.After;
@@ -202,7 +203,35 @@ public class RelationshipPersistanceServiceTest {
 
     @Test
     public void testUpdateMoniker() {
+        final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_REFERENCE_TYPE = "Thing";
+        final String TEST_RELATIONSHIP_TYPE = "Updated by URN";
+        final String TEST_MONIKER = "Moniker";
+        final String TEST_UPDATED_MONIKER = "Updated";
 
+        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type(TEST_RELATIONSHIP_TYPE)
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
+            .moniker(TEST_MONIKER)
+            .build();
+
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+
+        RelationshipUpdateMoniker relationshipUpdateMoniker = RelationshipUpdateMoniker.builder()
+            .urn(urn)
+            .moniker(TEST_UPDATED_MONIKER)
+            .build();
+
+        relationshipPersistenceService.updateMoniker(accountUrn, relationshipUpdateMoniker);
+
+        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
+
+        assertTrue(relationshipResponse.isPresent());
+        assertEquals(TEST_UPDATED_MONIKER, relationshipResponse.get().getMoniker());
     }
 
 }
