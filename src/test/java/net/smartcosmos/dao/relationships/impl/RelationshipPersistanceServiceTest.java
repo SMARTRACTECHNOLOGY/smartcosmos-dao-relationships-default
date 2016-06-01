@@ -179,7 +179,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_REFERENCE_TYPE = "Thing";
-        final String TEST_RELATIONSHIP_TYPE = "Found by URN";
+        final String TEST_RELATIONSHIP_TYPE = "Delete by URN";
         final String TEST_MONIKER = "Moniker";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
@@ -190,8 +190,6 @@ public class RelationshipPersistanceServiceTest {
             .relatedReferenceUrn(TEST_RELATED_ENTITY)
             .moniker(TEST_MONIKER)
             .build();
-
-        Optional<RelationshipResponse> relationshipResponse;
 
         String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
 
