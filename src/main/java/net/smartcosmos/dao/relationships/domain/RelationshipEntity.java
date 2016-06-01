@@ -17,7 +17,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.beans.ConstructorProperties;
@@ -33,7 +32,6 @@ public class RelationshipEntity implements Serializable {
 
     private static final int UUID_LENGTH = 16;
     private static final int ENTITYREFERENCETYPE_LENGTH = 255;
-    private static final int REFERENCE_URN_LENGTH = 767;
     private static final int TYPE_LENGTH = 255;
     private static final int MONIKER_LENGTH = 2048;
     private static final int NAME_LENGTH = 255;
@@ -56,13 +54,13 @@ public class RelationshipEntity implements Serializable {
 
     @NotEmpty
     @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="entityReferenceType", length = REFERENCE_URN_LENGTH, nullable = false, updatable = false)
+    @Column(name="entityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
     private String entityReferenceType;
 
-    @NotEmpty
-    @Size(max = REFERENCE_URN_LENGTH)
-    @Column(name="referenceUrn", length = REFERENCE_URN_LENGTH, nullable = false, updatable = false)
-    private String referenceUrn;
+    @NotNull
+    @Type(type = "uuid-binary")
+    @Column(name="referenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID referenceId;
 
     @NotEmpty
     @Size(max = TYPE_LENGTH)
@@ -71,13 +69,13 @@ public class RelationshipEntity implements Serializable {
 
     @NotEmpty
     @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="relatedEntityReferenceType", length = REFERENCE_URN_LENGTH, nullable = false, updatable = false)
+    @Column(name="relatedEntityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
     private String relatedEntityReferenceType;
 
-    @NotEmpty
-    @Size(max = REFERENCE_URN_LENGTH)
-    @Column(name="relatedReferenceUrn", length = REFERENCE_URN_LENGTH, nullable = false, updatable = false)
-    private String relatedReferenceUrn;
+    @NotNull
+    @Type(type = "uuid-binary")
+    @Column(name="relatedReferenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID relatedReferenceId;
 
     @NotNull
     @Type(type = "uuid-binary")
@@ -89,8 +87,6 @@ public class RelationshipEntity implements Serializable {
     private Long created;
 
     @LastModifiedDate
-//    @Column(name = "lastModifiedTimestamp", insertable = false, updatable = true) // lastModified only set on update, might be used later
-    // lastModified already set on create (v2 compatibility)
     @Column(name = "lastModifiedTimestamp", nullable = false, insertable = true, updatable = true)
     private Long lastModified;
 
@@ -105,15 +101,15 @@ public class RelationshipEntity implements Serializable {
         We therefore provide our own AllArgsConstructor that is used by the generated builder and takes care of field initialization.
      */
     @Builder
-    @ConstructorProperties({"id", "entityReferenceType", "referenceUrn", "type",
-        "relatedEntityReferenceType", "relatedReferenceUrn", "accountId", "created", "lastModified", "moniker"})
+    @ConstructorProperties({"id", "entityReferenceType", "referenceId", "type",
+        "relatedEntityReferenceType", "relatedReferenceId", "accountId", "created", "lastModified", "moniker"})
     protected RelationshipEntity(
             UUID id,
             String entityReferenceType,
-            String referenceUrn,
+            UUID referenceId,
             String type,
             String relatedEntityReferenceType,
-            String relatedReferenceUrn,
+            UUID relatedReferenceId,
             UUID accountId,
             Long created,
             Long lastModified,
@@ -121,10 +117,10 @@ public class RelationshipEntity implements Serializable {
     {
         this.id = id;
         this.entityReferenceType = entityReferenceType;
-        this.referenceUrn = referenceUrn;
+        this.referenceId = referenceId;
         this.type = type;
         this.relatedEntityReferenceType = relatedEntityReferenceType;
-        this.relatedReferenceUrn = relatedReferenceUrn;
+        this.relatedReferenceId = relatedReferenceId;
         this.accountId = accountId;
         this.created = created;
         this.lastModified = lastModified;
