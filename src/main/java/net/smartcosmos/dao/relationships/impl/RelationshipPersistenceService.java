@@ -5,12 +5,15 @@ import net.smartcosmos.dao.relationships.RelationshipDao;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
-import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
+import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.util.UuidUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -185,7 +188,22 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
     @Override
     public List<RelationshipResponse> findAllReflexive(String accountUrn, String entityReferenceType, String referenceUrn) {
-        return null;
+
+        Specification<RelationshipEntity> accountUrnSpecification = null;
+        if (StringUtils.isNotBlank(accountUrn)) {
+            UUID accountUuid = UuidUtil.getUuidFromAccountUrn(accountUrn);
+            accountUrnSpecification = searchSpecifications.matchUuid(accountUuid, "accountId");
+        }
+
+        Iterable<RelationshipEntity> returnedValues = relationshipRepository.findAll(Specifications.where(accountUrnSpecification));
+
+        // TODO: Add Specification for reflexive query
+
+        List<RelationshipResponse> convertedList = new ArrayList<>();
+        for (RelationshipEntity entity: returnedValues) {
+            convertedList.add(conversionService.convert(entity, RelationshipResponse.class));
+        }
+        return convertedList;
     }
 
 
