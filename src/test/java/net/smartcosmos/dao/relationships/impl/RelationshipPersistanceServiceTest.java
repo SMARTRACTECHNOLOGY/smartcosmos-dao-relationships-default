@@ -369,18 +369,31 @@ public class RelationshipPersistanceServiceTest {
         List<RelationshipResponse> responseList = relationshipPersistenceService.findAllReflexive(accountUrn, REFERENCE_TYPE, ENTITY_URN_A);
 
         assertFalse(responseList.isEmpty());
-        assertEquals(2, responseList.size());
-        assertEquals(RELATIONSHIP_TYPE_REFLEXIVE, responseList.get(0).getType());
-        assertEquals(RELATIONSHIP_TYPE_REFLEXIVE, responseList.get(1).getType());
+        assertEquals(4, responseList.size());
+        
+        List<String> reflexiveList = new ArrayList<>();
+        List<String> nonReflexiveList = new ArrayList<>();
+        
+        for (RelationshipResponse response : responseList) {
+            
+            assertNotNull(response.getReciprocal());
+            if (RELATIONSHIP_TYPE_REFLEXIVE.equals(response.getType())) {
+                assertTrue(response.getReciprocal());
+                reflexiveList.add(response.getUrn());
+            } else {
+                assertFalse(response.getReciprocal());
+                nonReflexiveList.add(response.getUrn());
+            }
+        }
 
-        List<String> urnList = responseList.stream()
-            .map(o -> o.getUrn())
-            .collect(Collectors.toList());
+        assertFalse(reflexiveList.isEmpty());
+        assertEquals(2, reflexiveList.size());
+        assertTrue(reflexiveList.contains(reflexiveUrn1));
+        assertTrue(reflexiveList.contains(reflexiveUrn2));
 
-        assertTrue(urnList.contains(reflexiveUrn1));
-        assertTrue(urnList.contains(reflexiveUrn2));
-
-        assertFalse(urnList.contains(nonReflexiveUrn1));
-        assertFalse(urnList.contains(nonReflexiveUrn2));
+        assertFalse(nonReflexiveList.isEmpty());
+        assertEquals(2, nonReflexiveList.size());
+        assertTrue(nonReflexiveList.contains(nonReflexiveUrn1));
+        assertTrue(nonReflexiveList.contains(nonReflexiveUrn2));
     }
 }
