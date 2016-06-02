@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -225,4 +226,65 @@ public class RelationshipPersistanceServiceTest {
         assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getType());
     }
 
+    @Test
+    public void testFindByType() {
+        final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_REFERENCE_TYPE = "Thing";
+        final String TEST_RELATIONSHIP_TYPE = "Found specific";
+        final String TEST_MONIKER = "Moniker";
+
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type(TEST_RELATIONSHIP_TYPE)
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
+            .moniker(TEST_MONIKER)
+            .build();
+
+        relationshipPersistenceService.upsert(accountUrn, relationshipCreate);
+
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findByType(accountUrn, TEST_REFERENCE_TYPE, TEST_ENTITY, TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(responseList.isEmpty());
+        assertEquals(1, responseList.size());
+        assertEquals(TEST_REFERENCE_TYPE, responseList.get(0).getEntityReferenceType());
+        assertEquals(TEST_ENTITY, responseList.get(0).getReferenceUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE, responseList.get(0).getType());
+        assertEquals(TEST_REFERENCE_TYPE, responseList.get(0).getRelatedEntityReferenceType());
+        assertEquals(TEST_RELATED_ENTITY, responseList.get(0).getRelatedReferenceUrn());
+        assertEquals(TEST_MONIKER, responseList.get(0).getMoniker());
+    }
+
+    @Test
+    public void testFindByTypeReverse() {
+        final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String TEST_REFERENCE_TYPE = "Thing";
+        final String TEST_RELATIONSHIP_TYPE = "Found specific";
+        final String TEST_MONIKER = "Moniker";
+
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type(TEST_RELATIONSHIP_TYPE)
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
+            .moniker(TEST_MONIKER)
+            .build();
+
+        relationshipPersistenceService.upsert(accountUrn, relationshipCreate);
+
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findByTypeReverse(accountUrn, TEST_REFERENCE_TYPE, TEST_RELATED_ENTITY, TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(responseList.isEmpty());
+        assertEquals(1, responseList.size());
+        assertEquals(TEST_REFERENCE_TYPE, responseList.get(0).getEntityReferenceType());
+        assertEquals(TEST_ENTITY, responseList.get(0).getReferenceUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE, responseList.get(0).getType());
+        assertEquals(TEST_REFERENCE_TYPE, responseList.get(0).getRelatedEntityReferenceType());
+        assertEquals(TEST_RELATED_ENTITY, responseList.get(0).getRelatedReferenceUrn());
+        assertEquals(TEST_MONIKER, responseList.get(0).getMoniker());
+    }
 }
