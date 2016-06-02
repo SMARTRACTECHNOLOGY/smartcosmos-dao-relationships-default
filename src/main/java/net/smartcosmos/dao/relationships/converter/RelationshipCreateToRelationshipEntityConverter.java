@@ -1,10 +1,7 @@
 package net.smartcosmos.dao.relationships.converter;
 
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
-import net.smartcosmos.dto.relationships.RelationshipCreate;
-import net.smartcosmos.security.user.SmartCosmosUser;
-import net.smartcosmos.security.user.SmartCosmosUserHolder;
-
+import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.util.UuidUtil;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistrar;
@@ -14,24 +11,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RelationshipCreateToRelationshipEntityConverter
-        implements Converter<RelationshipCreate, RelationshipEntity>, FormatterRegistrar {
+        implements Converter<RelationshipUpsert, RelationshipEntity>, FormatterRegistrar {
 
     @Override
-    public RelationshipEntity convert(RelationshipCreate relationshipCreate) {
-
-        // Retrieve current user.
-        SmartCosmosUser user = SmartCosmosUserHolder.getCurrentUser();
+    public RelationshipEntity convert(RelationshipUpsert relationshipUpsert) {
 
         return RelationshipEntity.builder()
                 // Required
-                .entityReferenceType(relationshipCreate.getEntityReferenceType())
-                .referenceId(UuidUtil.getUuidFromUrn(relationshipCreate.getReferenceUrn()))
-                .type(relationshipCreate.getType())
-                .relatedEntityReferenceType(relationshipCreate.getRelatedEntityReferenceType())
-                .relatedReferenceId(UuidUtil.getUuidFromUrn(relationshipCreate.getRelatedReferenceUrn()))
-                .accountId(UuidUtil.getUuidFromAccountUrn(user.getAccountUrn()))
+                .entityReferenceType(relationshipUpsert.getEntityReferenceType())
+                .referenceId(UuidUtil.getUuidFromUrn(relationshipUpsert.getReferenceUrn()))
+                .type(relationshipUpsert.getType())
+                .relatedEntityReferenceType(relationshipUpsert.getRelatedEntityReferenceType())
+                .relatedReferenceId(UuidUtil.getUuidFromUrn(relationshipUpsert.getRelatedReferenceUrn()))
                 // Optional
-                .moniker(relationshipCreate.getMoniker()).build();
+                .moniker(relationshipUpsert.getMoniker()).build();
     }
 
     @Override

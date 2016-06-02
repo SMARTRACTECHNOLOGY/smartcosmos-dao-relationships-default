@@ -2,7 +2,6 @@ package net.smartcosmos.dao.relationships.repository;
 
 import net.smartcosmos.dao.relationships.RelationshipPersistenceConfig;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
-
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.util.UuidUtil;
 import org.junit.After;
@@ -16,9 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -65,6 +65,11 @@ public class RelationshipRepositoryTest {
         id = entity.getId();
     }
 
+    @After
+    public void delete() throws Exception {
+        relationshipRepository.deleteAll();
+    }
+
     @Test
     public void findByAccountIdAndId() throws Exception {
         assertTrue(this.relationshipRepository.findByAccountIdAndId(accountId, id).isPresent());
@@ -84,8 +89,49 @@ public class RelationshipRepositoryTest {
             .isPresent());
     }
 
-    @After
-    public void delete() throws Exception {
-        relationshipRepository.delete(id);
+    @Test
+    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            referenceId,
+            TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
+    public void findByAccountIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            relatedReferenceId,
+            TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
+    public void deleteByAccountIdAndId() {
+        List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, id);
+
+        assertFalse(deleteList.isEmpty());
+        assertEquals(1, deleteList.size());
+
+        RelationshipEntity entity = deleteList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
     }
 }

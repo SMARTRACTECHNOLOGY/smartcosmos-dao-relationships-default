@@ -3,8 +3,8 @@ package net.smartcosmos.dao.relationships.repository;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.QueryByExampleExecutor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +25,11 @@ public interface RelationshipRepository extends
         String type,
         String relatedEntityReferenceType,
         UUID relatedReferenceId);
+
+    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(UUID accountId, String entityReferenceType, UUID referenceId, String type);
+
+    List<RelationshipEntity> findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(UUID accountId, String relatedEntityReferenceType, UUID relatedReferenceId, String type);
+
+    @Transactional
+    List<RelationshipEntity> deleteByAccountIdAndId(UUID accountId, UUID id);
 }
