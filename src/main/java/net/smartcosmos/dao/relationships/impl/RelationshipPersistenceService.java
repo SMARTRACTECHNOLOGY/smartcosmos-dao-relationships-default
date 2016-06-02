@@ -161,9 +161,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
             log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, relatedReferenceUrn);
         }
 
-        return entityList.stream()
-            .map(o -> conversionService.convert(o, RelationshipResponse.class))
-            .collect(Collectors.toList());
+        return getResponseList(entityList);
     }
 
     @Override
