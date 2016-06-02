@@ -373,14 +373,14 @@ public class RelationshipPersistanceServiceTest {
         assertEquals(RELATIONSHIP_TYPE_REFLEXIVE, responseList.get(0).getType());
         assertEquals(RELATIONSHIP_TYPE_REFLEXIVE, responseList.get(1).getType());
 
-        List<UUID> uuidList = responseList.stream()
-            .map(o -> UuidUtil.getUuidFromUrn(o.getUrn()))
+        List<String> urnList = responseList.stream()
+            .map(o -> o.getUrn())
             .collect(Collectors.toList());
 
-        assertTrue(uuidList.contains(reflexiveUrn1));
-        assertTrue(uuidList.contains(reflexiveUrn2));
+        assertTrue(urnList.contains(reflexiveUrn1));
+        assertTrue(urnList.contains(reflexiveUrn2));
 
-        assertFalse(uuidList.contains(nonReflexiveUrn1));
-        assertFalse(uuidList.contains(nonReflexiveUrn2));
+        assertFalse(urnList.contains(nonReflexiveUrn1));
+        assertFalse(urnList.contains(nonReflexiveUrn2));
     }
 }
