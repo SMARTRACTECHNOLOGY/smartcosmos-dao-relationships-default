@@ -19,10 +19,6 @@ public class RelationshipEntityToRelationshipResponseConverter
     @Override
     public RelationshipResponse convert(RelationshipEntity entity) {
 
-        if (entity == null) {
-            return null;
-        }
-
         return RelationshipResponse.builder()
                 // Required
                 .entityReferenceType(entity.getEntityReferenceType())
