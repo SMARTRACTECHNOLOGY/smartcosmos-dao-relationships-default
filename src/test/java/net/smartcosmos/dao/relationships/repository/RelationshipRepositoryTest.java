@@ -2,7 +2,6 @@ package net.smartcosmos.dao.relationships.repository;
 
 import net.smartcosmos.dao.relationships.RelationshipPersistenceConfig;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
-
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.util.UuidUtil;
 import org.junit.After;
@@ -16,8 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -65,6 +66,11 @@ public class RelationshipRepositoryTest {
         id = entity.getId();
     }
 
+    @After
+    public void delete() throws Exception {
+        relationshipRepository.deleteAll();
+    }
+
     @Test
     public void findByAccountIdAndId() throws Exception {
         assertTrue(this.relationshipRepository.findByAccountIdAndId(accountId, id).isPresent());
@@ -84,8 +90,14 @@ public class RelationshipRepositoryTest {
             .isPresent());
     }
 
-    @After
-    public void delete() throws Exception {
-        relationshipRepository.delete(id);
+    @Test
+    public void deleteByAccountIdAndId() {
+        Optional<RelationshipEntity> optional = relationshipRepository.findByAccountIdAndId(accountId, id);
+
+        assertTrue(optional.isPresent());
+
+        RelationshipEntity entity = optional.get();
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
     }
 }
