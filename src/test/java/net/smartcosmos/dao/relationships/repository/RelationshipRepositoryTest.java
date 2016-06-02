@@ -142,6 +142,22 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
+    public void findByAccountIdAndEntityReferenceTypeAndReferenceId() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            referenceId);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
     public void deleteByAccountIdAndId() {
         List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, id);
 
