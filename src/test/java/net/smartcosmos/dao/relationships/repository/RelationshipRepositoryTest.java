@@ -90,6 +90,40 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
+    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            referenceId,
+            TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
+    public void findByAccountIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            relatedReferenceId,
+            TEST_RELATIONSHIP_TYPE);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
     public void deleteByAccountIdAndId() {
         List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, id);
 
