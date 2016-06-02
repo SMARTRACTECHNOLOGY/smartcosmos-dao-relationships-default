@@ -26,6 +26,10 @@ public interface RelationshipRepository extends
         String relatedEntityReferenceType,
         UUID relatedReferenceId);
 
+    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceUrnAndType(UUID accountId, String entityReferenceType, UUID referenceId, String type);
+
+    List<RelationshipEntity> findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceUrnAndType(UUID accountId, String relatedEntityReferenceType, UUID relatedReferenceId, String type);
+
     @Transactional
     List<RelationshipEntity> deleteByAccountIdAndId(UUID accountId, UUID id);
 }
