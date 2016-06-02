@@ -137,7 +137,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 UuidUtil.getUuidFromUrn(referenceUrn),
                 type);
         } catch (IllegalArgumentException e) {
-            // Optional.empty() will be returned anyway
+            // empty list will be returned anyway
             log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
         }
 
@@ -157,7 +157,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 UuidUtil.getUuidFromUrn(relatedReferenceUrn),
                 type);
         } catch (IllegalArgumentException e) {
-            // Optional.empty() will be returned anyway
+            // empty will be returned anyway
             log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, relatedReferenceUrn);
         }
 
