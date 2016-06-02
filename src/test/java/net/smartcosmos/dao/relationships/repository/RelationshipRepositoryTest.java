@@ -15,11 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -92,11 +91,12 @@ public class RelationshipRepositoryTest {
 
     @Test
     public void deleteByAccountIdAndId() {
-        Optional<RelationshipEntity> optional = relationshipRepository.findByAccountIdAndId(accountId, id);
+        List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, id);
 
-        assertTrue(optional.isPresent());
+        assertFalse(deleteList.isEmpty());
+        assertEquals(1, deleteList.size());
 
-        RelationshipEntity entity = optional.get();
+        RelationshipEntity entity = deleteList.get(0);
         assertEquals(id, entity.getId());
         assertEquals(accountId, entity.getAccountId());
     }
