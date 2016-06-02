@@ -188,31 +188,37 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
         UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
 
-        // find all
-        List<RelationshipEntity> allList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
-            accountId,
-            entityReferenceType,
-            UuidUtil.getUuidFromUrn(referenceUrn));
-
-        List<RelationshipEntity> reciprocalList = new ArrayList<>();
-        for (RelationshipEntity entity : allList) {
-
-            // find specific reciprocal
-            Optional<RelationshipEntity> reciprocal = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+        List<RelationshipResponse> responseList = new ArrayList<>();
+        try {
+            // find all
+            List<RelationshipEntity> allList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
                 accountId,
-                entity.getRelatedEntityReferenceType(),
-                entity.getRelatedReferenceId(),
-                entity.getType(),
-                entity.getEntityReferenceType(),
-                entity.getReferenceId());
-
-            if (reciprocal.isPresent()) {
-                reciprocalList.add(reciprocal.get());
-                reciprocalList.add(entity);
+                entityReferenceType,
+                UuidUtil.getUuidFromUrn(referenceUrn));
+    
+            for (RelationshipEntity entity : allList) {
+    
+                RelationshipResponse response = conversionService.convert(entity, RelationshipResponse.class);
+                
+                // find specific reciprocal
+                Optional<RelationshipEntity> reciprocal = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+                    accountId,
+                    entity.getRelatedEntityReferenceType(),
+                    entity.getRelatedReferenceId(),
+                    entity.getType(),
+                    entity.getEntityReferenceType(),
+                    entity.getReferenceId());
+    
+                response.setReciprocal(reciprocal.isPresent());
+                
+                responseList.add(response);
             }
+        } catch (IllegalArgumentException e) {
+            // empty will be returned anyway
+            log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
         }
 
-        return getResponseList(reciprocalList);
+        return responseList;
     }
 
 
