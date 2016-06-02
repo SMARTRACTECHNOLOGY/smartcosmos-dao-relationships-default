@@ -3,10 +3,8 @@ package net.smartcosmos.dao.relationships.impl;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceConfig;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
-import net.smartcosmos.dto.relationships.RelationshipCreate;
-import net.smartcosmos.dto.relationships.RelationshipLookupSpecific;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
-import net.smartcosmos.dto.relationships.RelationshipUpdateMoniker;
+import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.security.user.SmartCosmosUser;
 import net.smartcosmos.util.UuidUtil;
 import org.junit.After;
@@ -29,9 +27,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 
 /**
@@ -86,7 +82,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
         final String TEST_MONIKER = "Moniker";
 
-        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
             .referenceUrn(TEST_ENTITY)
             .type(TEST_RELATIONSHIP_TYPE)
@@ -96,7 +92,7 @@ public class RelationshipPersistanceServiceTest {
             .build();
 
         RelationshipResponse relationshipResponse = relationshipPersistenceService
-            .create(accountUrn, relationshipCreate);
+            .upsert(accountUrn, relationshipCreate);
 
         assertEquals(TEST_REFERENCE_TYPE, relationshipResponse.getEntityReferenceType());
         assertEquals(TEST_ENTITY, relationshipResponse.getReferenceUrn());
@@ -114,7 +110,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found by URN";
         final String TEST_MONIKER = "Moniker";
 
-        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
             .referenceUrn(TEST_ENTITY)
             .type(TEST_RELATIONSHIP_TYPE)
@@ -123,7 +119,7 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+        String urn = relationshipPersistenceService.upsert(accountUrn, relationshipCreate).getUrn();
 
         Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
 
@@ -144,7 +140,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found specific";
         final String TEST_MONIKER = "Moniker";
 
-        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
             .referenceUrn(TEST_ENTITY)
             .type(TEST_RELATIONSHIP_TYPE)
@@ -153,18 +149,9 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        relationshipPersistenceService.create(accountUrn, relationshipCreate);
+        relationshipPersistenceService.upsert(accountUrn, relationshipCreate);
 
-        RelationshipLookupSpecific relationshipLookupSpecific = RelationshipLookupSpecific.builder()
-            .entityReferenceType(TEST_REFERENCE_TYPE)
-            .referenceUrn(TEST_ENTITY)
-            .type(TEST_RELATIONSHIP_TYPE)
-            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
-            .relatedReferenceUrn(TEST_RELATED_ENTITY)
-            .build();
-
-        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService
-            .findSpecific(accountUrn, relationshipLookupSpecific);
+        Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findSpecific(accountUrn, TEST_REFERENCE_TYPE, TEST_ENTITY, TEST_REFERENCE_TYPE, TEST_RELATED_ENTITY, TEST_RELATIONSHIP_TYPE);
 
         assertTrue(relationshipResponse.isPresent());
         assertEquals(TEST_REFERENCE_TYPE, relationshipResponse.get().getEntityReferenceType());
@@ -183,7 +170,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Delete by URN";
         final String TEST_MONIKER = "Moniker";
 
-        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
             .referenceUrn(TEST_ENTITY)
             .type(TEST_RELATIONSHIP_TYPE)
@@ -192,7 +179,7 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+        String urn = relationshipPersistenceService.upsert(accountUrn, relationshipCreate).getUrn();
 
         assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
 
@@ -202,7 +189,7 @@ public class RelationshipPersistanceServiceTest {
     }
 
     @Test
-    public void testUpdateMoniker() {
+    public void testUpdate() {
         final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_RELATED_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_REFERENCE_TYPE = "Thing";
@@ -210,7 +197,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_MONIKER = "Moniker";
         final String TEST_UPDATED_MONIKER = "Updated";
 
-        RelationshipCreate relationshipCreate = RelationshipCreate.builder()
+        RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
             .referenceUrn(TEST_ENTITY)
             .type(TEST_RELATIONSHIP_TYPE)
@@ -219,19 +206,23 @@ public class RelationshipPersistanceServiceTest {
             .moniker(TEST_MONIKER)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).getUrn();
+        String urn = relationshipPersistenceService.upsert(accountUrn, relationshipCreate).getUrn();
 
-        RelationshipUpdateMoniker relationshipUpdateMoniker = RelationshipUpdateMoniker.builder()
-            .urn(urn)
+        RelationshipUpsert relationshipUpdate = RelationshipUpsert.builder()
+            .entityReferenceType(TEST_REFERENCE_TYPE)
+            .referenceUrn(TEST_ENTITY)
+            .type("bogus") // to check if type would get updated
+            .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
+            .relatedReferenceUrn(TEST_RELATED_ENTITY)
             .moniker(TEST_UPDATED_MONIKER)
             .build();
 
-        relationshipPersistenceService.updateMoniker(accountUrn, relationshipUpdateMoniker);
+        relationshipPersistenceService.upsert(accountUrn, relationshipUpdate);
 
         Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
 
         assertTrue(relationshipResponse.isPresent());
-        assertEquals(TEST_UPDATED_MONIKER, relationshipResponse.get().getMoniker());
+        assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getType());
     }
 
 }
