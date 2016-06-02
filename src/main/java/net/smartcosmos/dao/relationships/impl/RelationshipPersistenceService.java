@@ -116,9 +116,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
             log.warn("Illegal URN submitted: %s by account %s", urn, accountUrn);
         }
 
-        return deleteList.stream()
-            .map(o -> conversionService.convert(o, RelationshipResponse.class))
-            .collect(Collectors.toList());
+        return getResponseList(deleteList);
     }
 
     @Override
@@ -133,7 +131,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceUrnAndType(
+            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -143,9 +141,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
             log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
         }
 
-        return entityList.stream()
-            .map(o -> conversionService.convert(o, RelationshipResponse.class))
-            .collect(Collectors.toList());
+        return getResponseList(entityList);
     }
 
     @Override
@@ -197,5 +193,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
             UuidUtil.getUuidFromUrn(upsertRelationship.getRelatedReferenceUrn()));
 
         return (existingEntity.isPresent() ? existingEntity.get().getId() : null);
+    }
+
+    private List<RelationshipResponse> getResponseList(List<RelationshipEntity> entityList) {
+        return entityList.stream()
+            .map(o -> conversionService.convert(o, RelationshipResponse.class))
+            .collect(Collectors.toList());
     }
 }
