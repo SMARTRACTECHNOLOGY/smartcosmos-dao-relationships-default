@@ -30,6 +30,8 @@ public interface RelationshipRepository extends
 
     List<RelationshipEntity> findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(UUID accountId, String relatedEntityReferenceType, UUID relatedReferenceId, String type);
 
+    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(UUID accountId, String entityReferenceType, UUID referenceId, String relatedEntityReferenceType, UUID relatedReferenceId);
+
     @Transactional
     List<RelationshipEntity> deleteByAccountIdAndId(UUID accountId, UUID id);
 }
