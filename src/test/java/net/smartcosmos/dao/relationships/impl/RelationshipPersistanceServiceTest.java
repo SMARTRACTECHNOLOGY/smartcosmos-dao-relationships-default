@@ -23,11 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -321,7 +317,7 @@ public class RelationshipPersistanceServiceTest {
     }
 
     @Test
-    public void testFindAllReflexive() {
+    public void testFindAllCheckReciprocal() {
         final String ENTITY_URN_A = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String ENTITY_URN_B = "urn:uuid:" + UuidUtil.getNewUuidAsString();
 
@@ -366,34 +362,24 @@ public class RelationshipPersistanceServiceTest {
             .build();
         final String nonReflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity2).getUrn();
 
-        List<RelationshipResponse> responseList = relationshipPersistenceService.findAllReflexive(accountUrn, REFERENCE_TYPE, ENTITY_URN_A);
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findAll(accountUrn, REFERENCE_TYPE, ENTITY_URN_A, true);
 
         assertFalse(responseList.isEmpty());
-        assertEquals(4, responseList.size());
-        
-        List<String> reflexiveList = new ArrayList<>();
-        List<String> nonReflexiveList = new ArrayList<>();
-        
+        assertEquals(2, responseList.size());
+
         for (RelationshipResponse response : responseList) {
-            
+
             assertNotNull(response.getReciprocal());
             if (RELATIONSHIP_TYPE_REFLEXIVE.equals(response.getType())) {
                 assertTrue(response.getReciprocal());
-                reflexiveList.add(response.getUrn());
+                assertEquals(reflexiveUrn1, response.getUrn());
             } else {
                 assertFalse(response.getReciprocal());
-                nonReflexiveList.add(response.getUrn());
+                assertEquals(nonReflexiveUrn1, response.getUrn());
             }
+
+            assertNotEquals(reflexiveUrn2, response.getUrn());
+            assertNotEquals(nonReflexiveUrn2, response.getUrn());
         }
-
-        assertFalse(reflexiveList.isEmpty());
-        assertEquals(2, reflexiveList.size());
-        assertTrue(reflexiveList.contains(reflexiveUrn1));
-        assertTrue(reflexiveList.contains(reflexiveUrn2));
-
-        assertFalse(nonReflexiveList.isEmpty());
-        assertEquals(2, nonReflexiveList.size());
-        assertTrue(nonReflexiveList.contains(nonReflexiveUrn1));
-        assertTrue(nonReflexiveList.contains(nonReflexiveUrn2));
     }
 }
