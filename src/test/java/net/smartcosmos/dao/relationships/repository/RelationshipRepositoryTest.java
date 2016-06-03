@@ -124,6 +124,24 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
+    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedEntityReferenceId() {
+
+        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            accountId,
+            TEST_REFERENCE_TYPE,
+            referenceId,
+            TEST_REFERENCE_TYPE,
+            relatedReferenceId);
+
+        assertFalse(entityList.isEmpty());
+        assertEquals(1, entityList.size());
+
+        RelationshipEntity entity = entityList.get(0);
+        assertEquals(id, entity.getId());
+        assertEquals(accountId, entity.getAccountId());
+    }
+
+    @Test
     public void findByAccountIdAndEntityReferenceTypeAndReferenceId() {
 
         List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
