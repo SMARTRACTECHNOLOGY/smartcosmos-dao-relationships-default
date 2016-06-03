@@ -416,7 +416,7 @@ public class RelationshipPersistanceServiceTest {
     }
 
     @Test
-    public void testFindAllReflexive() {
+    public void testFindAllSymmetric() {
         final String ENTITY_URN_A = "urn:uuid:" + UuidUtil.getNewUuidAsString();
         final String ENTITY_URN_B = "urn:uuid:" + UuidUtil.getNewUuidAsString();
 
@@ -461,7 +461,7 @@ public class RelationshipPersistanceServiceTest {
             .build();
         final String nonReflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity2).getUrn();
 
-        List<RelationshipResponse> responseList = relationshipPersistenceService.findAllReflexive(accountUrn, REFERENCE_TYPE, ENTITY_URN_A);
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findAllSymmetric(accountUrn, REFERENCE_TYPE, ENTITY_URN_A);
 
         assertFalse(responseList.isEmpty());
         assertEquals(2, responseList.size());

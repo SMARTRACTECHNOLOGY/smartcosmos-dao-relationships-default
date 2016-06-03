@@ -222,14 +222,14 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
             }
         } else {
-            responseList = findAllReflexive(accountUrn, entityReferenceType, referenceUrn);
+            responseList = findAllSymmetric(accountUrn, entityReferenceType, referenceUrn);
         }
 
         return responseList;
     }
 
     @Override
-    public List<RelationshipResponse> findAllReflexive(String accountUrn, String entityReferenceType, String referenceUrn) {
+    public List<RelationshipResponse> findAllSymmetric(String accountUrn, String entityReferenceType, String referenceUrn) {
 
         UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
 
