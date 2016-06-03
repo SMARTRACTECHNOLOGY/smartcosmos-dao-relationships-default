@@ -8,6 +8,7 @@ import net.smartcosmos.dao.relationships.util.SearchSpecifications;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
 import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.util.UuidUtil;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -204,7 +205,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
         List<RelationshipResponse> responseList = new ArrayList<>();
 
-        if (checkReciprocal) {
+        if (BooleanUtils.isTrue(checkReciprocal)) {
             UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
 
             try {
