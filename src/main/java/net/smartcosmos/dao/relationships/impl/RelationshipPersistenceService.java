@@ -5,9 +5,10 @@ import net.smartcosmos.dao.relationships.RelationshipDao;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
-import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
+import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.util.UuidUtil;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -200,8 +201,65 @@ public class RelationshipPersistenceService implements RelationshipDao {
     }
 
     @Override
+    public List<RelationshipResponse> findAll(String accountUrn, String entityReferenceType, String referenceUrn, Boolean checkReciprocal) {
+
+        List<RelationshipResponse> responseList = new ArrayList<>();
+
+        if (BooleanUtils.isTrue(checkReciprocal)) {
+            UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+
+            try {
+                List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+                    accountId,
+                    entityReferenceType,
+                    UuidUtil.getUuidFromUrn(referenceUrn));
+
+                return entityList.stream()
+                    .map(o -> convertAndIncludeReciprocalFlag(accountId, o))
+                    .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                // empty list will be returned anyway
+                log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
+            }
+        } else {
+            responseList = findAllReflexive(accountUrn, entityReferenceType, referenceUrn);
+        }
+
+        return responseList;
+    }
+
+    @Override
     public List<RelationshipResponse> findAllReflexive(String accountUrn, String entityReferenceType, String referenceUrn) {
-        return null;
+
+        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+
+        List<RelationshipResponse> resultList = new ArrayList<>();
+        try {
+            List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+                accountId,
+                entityReferenceType,
+                UuidUtil.getUuidFromUrn(referenceUrn));
+
+            for (RelationshipEntity entity : entityList) {
+                Optional<RelationshipEntity> reciprocal = findReciprocalRelationshipEntity(accountId, entity);
+                if (reciprocal.isPresent()) {
+                    resultList.add(conversionService.convert(entity, RelationshipResponse.class));
+                    resultList.add(conversionService.convert(reciprocal.get(), RelationshipResponse.class));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            // empty will be returned anyway
+            log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
+        }
+
+        return resultList;
+    }
+
+    private RelationshipResponse convertAndIncludeReciprocalFlag(UUID accountId, RelationshipEntity entity) {
+        RelationshipResponse response = conversionService.convert(entity, RelationshipResponse.class);
+        response.setReciprocal(findReciprocalRelationshipEntity(accountId, entity).isPresent());
+
+        return response;
     }
 
 
@@ -238,6 +296,16 @@ public class RelationshipPersistenceService implements RelationshipDao {
             UuidUtil.getUuidFromUrn(upsertRelationship.getRelatedReferenceUrn()));
 
         return (existingEntity.isPresent() ? existingEntity.get().getId() : null);
+    }
+
+    private Optional<RelationshipEntity> findReciprocalRelationshipEntity(UUID accountId, RelationshipEntity entity) {
+        return relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            accountId,
+            entity.getRelatedEntityReferenceType(),
+            entity.getRelatedReferenceId(),
+            entity.getType(),
+            entity.getEntityReferenceType(),
+            entity.getReferenceId());
     }
 
     private List<RelationshipResponse> getResponseList(List<RelationshipEntity> entityList) {

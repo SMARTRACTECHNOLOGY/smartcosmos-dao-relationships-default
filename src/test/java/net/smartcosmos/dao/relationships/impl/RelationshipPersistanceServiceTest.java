@@ -23,10 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -348,5 +346,134 @@ public class RelationshipPersistanceServiceTest {
         assertEquals(TEST_REFERENCE_TYPE, responseList.get(0).getRelatedEntityReferenceType());
         assertEquals(TEST_RELATED_ENTITY, responseList.get(0).getRelatedReferenceUrn());
         assertEquals(TEST_MONIKER, responseList.get(0).getMoniker());
+    }
+
+    @Test
+    public void testFindAllCheckReciprocal() {
+        final String ENTITY_URN_A = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String ENTITY_URN_B = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+
+        final String REFERENCE_TYPE = "Thing";
+        final String RELATIONSHIP_TYPE_REFLEXIVE = "Reflexive";
+        final String RELATIONSHIP_TYPE_NON_REFLEXIVE_A = "Not Reflexive";
+        final String RELATIONSHIP_TYPE_NON_REFLEXIVE_B = "Not Reflexive as well";
+
+        RelationshipUpsert reflexiveEntity1 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_A)
+            .type(RELATIONSHIP_TYPE_REFLEXIVE)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_B)
+            .build();
+        final String reflexiveUrn1 = relationshipPersistenceService.upsert(accountUrn, reflexiveEntity1).getUrn();
+
+        RelationshipUpsert reflexiveEntity2 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_B)
+            .type(RELATIONSHIP_TYPE_REFLEXIVE)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_A)
+            .build();
+        final String reflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, reflexiveEntity2).getUrn();
+
+        RelationshipUpsert nonReflexiveEntity1 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_A)
+            .type(RELATIONSHIP_TYPE_NON_REFLEXIVE_A)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_B)
+            .build();
+        final String nonReflexiveUrn1 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity1).getUrn();
+
+        RelationshipUpsert nonReflexiveEntity2 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_B)
+            .type(RELATIONSHIP_TYPE_NON_REFLEXIVE_B)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_A)
+            .build();
+        final String nonReflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity2).getUrn();
+
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findAll(accountUrn, REFERENCE_TYPE, ENTITY_URN_A, true);
+
+        assertFalse(responseList.isEmpty());
+        assertEquals(2, responseList.size());
+
+        for (RelationshipResponse response : responseList) {
+
+            assertNotNull(response.getReciprocal());
+            if (RELATIONSHIP_TYPE_REFLEXIVE.equals(response.getType())) {
+                assertTrue(response.getReciprocal());
+                assertEquals(reflexiveUrn1, response.getUrn());
+            } else {
+                assertFalse(response.getReciprocal());
+                assertEquals(nonReflexiveUrn1, response.getUrn());
+            }
+
+            assertNotEquals(reflexiveUrn2, response.getUrn());
+            assertNotEquals(nonReflexiveUrn2, response.getUrn());
+        }
+    }
+
+    @Test
+    public void testFindAllReflexive() {
+        final String ENTITY_URN_A = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+        final String ENTITY_URN_B = "urn:uuid:" + UuidUtil.getNewUuidAsString();
+
+        final String REFERENCE_TYPE = "Thing";
+        final String RELATIONSHIP_TYPE_REFLEXIVE = "Reflexive";
+        final String RELATIONSHIP_TYPE_NON_REFLEXIVE_A = "Not Reflexive";
+        final String RELATIONSHIP_TYPE_NON_REFLEXIVE_B = "Not Reflexive as well";
+
+        RelationshipUpsert reflexiveEntity1 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_A)
+            .type(RELATIONSHIP_TYPE_REFLEXIVE)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_B)
+            .build();
+        final String reflexiveUrn1 = relationshipPersistenceService.upsert(accountUrn, reflexiveEntity1).getUrn();
+
+        RelationshipUpsert reflexiveEntity2 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_B)
+            .type(RELATIONSHIP_TYPE_REFLEXIVE)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_A)
+            .build();
+        final String reflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, reflexiveEntity2).getUrn();
+
+        RelationshipUpsert nonReflexiveEntity1 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_A)
+            .type(RELATIONSHIP_TYPE_NON_REFLEXIVE_A)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_B)
+            .build();
+        final String nonReflexiveUrn1 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity1).getUrn();
+
+        RelationshipUpsert nonReflexiveEntity2 = RelationshipUpsert.builder()
+            .entityReferenceType(REFERENCE_TYPE)
+            .referenceUrn(ENTITY_URN_B)
+            .type(RELATIONSHIP_TYPE_NON_REFLEXIVE_B)
+            .relatedEntityReferenceType(REFERENCE_TYPE)
+            .relatedReferenceUrn(ENTITY_URN_A)
+            .build();
+        final String nonReflexiveUrn2 = relationshipPersistenceService.upsert(accountUrn, nonReflexiveEntity2).getUrn();
+
+        List<RelationshipResponse> responseList = relationshipPersistenceService.findAllReflexive(accountUrn, REFERENCE_TYPE, ENTITY_URN_A);
+
+        assertFalse(responseList.isEmpty());
+        assertEquals(2, responseList.size());
+
+        List<String> urnList = responseList.stream()
+            .map(o -> o.getUrn())
+            .collect(Collectors.toList());
+
+        assertTrue(urnList.contains(reflexiveUrn1));
+        assertTrue(urnList.contains(reflexiveUrn2));
+
+        assertFalse(urnList.contains(nonReflexiveUrn1));
+        assertFalse(urnList.contains(nonReflexiveUrn2));
     }
 }
