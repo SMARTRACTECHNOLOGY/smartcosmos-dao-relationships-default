@@ -112,7 +112,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
             UUID uuid = UuidUtil.getUuidFromUrn(urn);
             deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, uuid);
         } catch (IllegalArgumentException e) {
-            // Optional.empty() will be returned anyway
+            // empty list will be returned anyway
             log.warn("Illegal URN submitted: %s by account %s", urn, accountUrn);
         }
 
@@ -121,7 +121,23 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
     @Override
     public List<RelationshipResponse> findBetweenEntities(String accountUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn) {
-        return null;
+
+        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+
+        List<RelationshipEntity> entityList = new ArrayList<>();
+        try {
+            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+                accountId,
+                entityReferenceType,
+                UuidUtil.getUuidFromUrn(referenceUrn),
+                relatedEntityReferenceType,
+                UuidUtil.getUuidFromUrn(relatedReferenceUrn));
+        } catch (IllegalArgumentException e) {
+            // empty list will be returned anyway
+            log.warn("Illegal URN submitted by account %s: reference URN %s, related reference URN %s", accountUrn, referenceUrn, relatedReferenceUrn);
+        }
+
+        return getResponseList(entityList);
     }
 
     @Override
