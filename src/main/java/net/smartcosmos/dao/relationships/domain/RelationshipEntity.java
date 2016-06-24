@@ -1,6 +1,7 @@
 package net.smartcosmos.dao.relationships.domain;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @Builder
+@AllArgsConstructor
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "relationship") // , uniqueConstraints = @UniqueConstraint(columnNames = { "objectUrn", "accountUuid" }) )
 public class RelationshipEntity implements Serializable {
