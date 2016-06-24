@@ -31,11 +31,10 @@ import java.util.UUID;
 public class RelationshipEntity implements Serializable {
 
     private static final int UUID_LENGTH = 16;
-    private static final int ENTITYREFERENCETYPE_LENGTH = 255;
-    private static final int TYPE_LENGTH = 255;
-    private static final int MONIKER_LENGTH = 2048;
-    private static final int NAME_LENGTH = 255;
-    private static final int DESCRIPTION_LENGTH = 1024;
+    private static final int SOURCE_TARGET_TYPE_LENGTH = 255;
+    private static final int SOURCE_TARGET_URN_LENGTH = 255;
+    private static final int RELATIONSHIP_URN_LENGTH = 255;
+    private static final int RELATIONSHIP_TYPE_LENGTH = 255;
 
     /*
         Without setting an appropriate Hibernate naming strategy, the column names specified in the @Column annotations below will be converted
@@ -53,34 +52,34 @@ public class RelationshipEntity implements Serializable {
     private UUID id;
 
     @NotEmpty
-    @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="entityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
-    private String entityReferenceType;
+    @Size(max = SOURCE_TARGET_TYPE_LENGTH)
+    @Column(name="sourceType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
+    private String sourceType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="referenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID referenceId;
+    @Column(name="sourceId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID sourceId;
 
     @NotEmpty
-    @Size(max = TYPE_LENGTH)
-    @Column(name = "type", length = TYPE_LENGTH, nullable = false, updatable = false)
-    private String type;
+    @Size(max = SOURCE_TARGET_TYPE_LENGTH)
+    @Column(name="targetType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
+    private String targetType;
+
+    @NotNull
+    @Type(type = "uuid-binary")
+    @Column(name="targetId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID targetId;
 
     @NotEmpty
-    @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="relatedEntityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
-    private String relatedEntityReferenceType;
+    @Size(max = RELATIONSHIP_TYPE_LENGTH)
+    @Column(name = "relationshipType", length = RELATIONSHIP_TYPE_LENGTH, nullable = false, updatable = false)
+    private String relationshipType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="relatedReferenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID relatedReferenceId;
-
-    @NotNull
-    @Type(type = "uuid-binary")
-    @Column(name = "accountUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID accountId;
+    @Column(name = "tenantId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID tenantId;
 
     @CreatedDate
     @Column(name = "createdTimestamp", insertable = true, updatable = false)
@@ -90,10 +89,6 @@ public class RelationshipEntity implements Serializable {
     @Column(name = "lastModifiedTimestamp", nullable = false, insertable = true, updatable = true)
     private Long lastModified;
 
-    @Size(max = MONIKER_LENGTH)
-    @Column(name = "moniker", length = MONIKER_LENGTH, nullable = true, updatable = true)
-    private String moniker;
-
     /*
         Lombok's @Builder is not able to deal with field initialization default values. That's a known issue which won't get fixed:
         https://github.com/rzwitserloot/lombok/issues/663
@@ -101,29 +96,28 @@ public class RelationshipEntity implements Serializable {
         We therefore provide our own AllArgsConstructor that is used by the generated builder and takes care of field initialization.
      */
     @Builder
-    @ConstructorProperties({"id", "entityReferenceType", "referenceId", "type",
-        "relatedEntityReferenceType", "relatedReferenceId", "accountId", "created", "lastModified", "moniker"})
+    @ConstructorProperties({"id", "sourceType", "sourceId", "relationshipType",
+        "targetType", "targetId", "tenantId", "created", "lastModified", "moniker"})
     protected RelationshipEntity(
             UUID id,
-            String entityReferenceType,
-            UUID referenceId,
-            String type,
-            String relatedEntityReferenceType,
-            UUID relatedReferenceId,
-            UUID accountId,
+            String sourceType,
+            UUID sourceId,
+            String relationshipType,
+            String targetType,
+            UUID targetId,
+            UUID tenantId,
             Long created,
             Long lastModified,
             String moniker)
     {
         this.id = id;
-        this.entityReferenceType = entityReferenceType;
-        this.referenceId = referenceId;
-        this.type = type;
-        this.relatedEntityReferenceType = relatedEntityReferenceType;
-        this.relatedReferenceId = relatedReferenceId;
-        this.accountId = accountId;
+        this.sourceType = sourceType;
+        this.sourceId = sourceId;
+        this.targetType = targetType;
+        this.targetId = targetId;
+        this.tenantId = tenantId;
+        this.relationshipType = relationshipType;
         this.created = created;
         this.lastModified = lastModified;
-        this.moniker = moniker;
     }
 }
