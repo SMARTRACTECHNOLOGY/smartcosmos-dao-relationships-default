@@ -247,39 +247,6 @@ public class RelationshipPersistenceService implements RelationshipDao {
         return convert(entityList);
     }
 
-    @Deprecated
-    public List<RelationshipResponse> findAll(String tenantUrn, String entityReferenceType, String referenceUrn, Boolean checkReciprocal) {
-
-        return findAllSymmetric(tenantUrn, entityReferenceType, referenceUrn);
-    }
-
-    @Deprecated
-    public List<RelationshipResponse> findAllSymmetric(String tenantUrn, String entityReferenceType, String referenceUrn) {
-
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
-
-        List<RelationshipResponse> resultList = new ArrayList<>();
-        try {
-            List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
-                accountId,
-                entityReferenceType,
-                UuidUtil.getUuidFromUrn(referenceUrn));
-
-            for (RelationshipEntity entity : entityList) {
-                Optional<RelationshipEntity> reciprocal = findReciprocalRelationshipEntity(accountId, entity);
-                if (reciprocal.isPresent()) {
-                    resultList.add(conversionService.convert(entity, RelationshipResponse.class));
-                    resultList.add(conversionService.convert(reciprocal.get(), RelationshipResponse.class));
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            // empty will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s", tenantUrn, referenceUrn);
-        }
-
-        return resultList;
-    }
-
     // endregion
 
     // region Helper Methods
@@ -304,16 +271,6 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 throw e;
             }
         }
-    }
-
-    private Optional<RelationshipEntity> findReciprocalRelationshipEntity(UUID accountId, RelationshipEntity entity) {
-        return relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-            accountId,
-            entity.getRelatedEntityReferenceType(),
-            entity.getRelatedReferenceId(),
-            entity.getType(),
-            entity.getEntityReferenceType(),
-            entity.getReferenceId());
     }
 
     private List<RelationshipResponse> convert(List<RelationshipEntity> entityList) {
