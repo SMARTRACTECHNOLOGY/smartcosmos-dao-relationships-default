@@ -1,16 +1,11 @@
-package net.smartcosmos.dao.relationships.converter;;
-
-import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
+package net.smartcosmos.dao.relationships.converter;import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
+import net.smartcosmos.dao.relationships.util.UuidUtil;
+import net.smartcosmos.dto.relationships.RelationshipReference;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
-import net.smartcosmos.util.UuidUtil;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistrar;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Component
 public class RelationshipEntityToRelationshipResponseConverter
@@ -19,27 +14,23 @@ public class RelationshipEntityToRelationshipResponseConverter
     @Override
     public RelationshipResponse convert(RelationshipEntity entity) {
 
-        return RelationshipResponse.builder()
-                // Required
-                .entityReferenceType(entity.getEntityReferenceType())
-                .referenceUrn(UuidUtil.getUrnFromUuid(entity.getReferenceId()))
-                .type(entity.getType())
-                .relatedEntityReferenceType(entity.getRelatedEntityReferenceType())
-                .relatedReferenceUrn(UuidUtil.getUrnFromUuid(entity.getRelatedReferenceId()))
-                .urn(UuidUtil.getUrnFromUuid(entity.getId()))
-                .accountUrn(UuidUtil.getAccountUrnFromUuid(entity.getAccountId()))
-                // Optional
-                .moniker(entity.getMoniker())
-                // Don't forget to build it!
-                .build();
-    }
+        RelationshipReference source = RelationshipReference.builder()
+            .urn(UuidUtil.getThingUrnFromUuid(entity.getSourceId()))
+            .type(entity.getSourceType())
+            .build();
 
-    public List convertAll(Iterable<RelationshipEntity> entities) {
-        List<RelationshipResponse> convertedList = new ArrayList<>();
-        for (RelationshipEntity entity: entities) {
-            convertedList.add(convert(entity));
-        }
-        return convertedList;
+        RelationshipReference target = RelationshipReference.builder()
+            .urn(UuidUtil.getThingUrnFromUuid(entity.getTargetId()))
+            .type(entity.getTargetType())
+            .build();
+
+        return RelationshipResponse.builder()
+            .urn(UuidUtil.getRelationshipUrnFromUuid(entity.getId()))
+            .source(source)
+            .target(target)
+            .relationshipType(entity.getRelationshipType())
+            .tenantUrn(UuidUtil.getTenantUrnFromUuid(entity.getTenantId()))
+            .build();
     }
 
     @Override

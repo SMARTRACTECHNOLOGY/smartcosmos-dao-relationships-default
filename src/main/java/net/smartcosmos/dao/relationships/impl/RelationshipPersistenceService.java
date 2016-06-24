@@ -5,10 +5,10 @@ import net.smartcosmos.dao.relationships.RelationshipDao;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
+import net.smartcosmos.dao.relationships.util.UuidUtil;
+import net.smartcosmos.dto.relationships.Page;
+import net.smartcosmos.dto.relationships.RelationshipCreate;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
-import net.smartcosmos.dto.relationships.RelationshipUpsert;
-import net.smartcosmos.util.UuidUtil;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -38,34 +38,52 @@ public class RelationshipPersistenceService implements RelationshipDao {
         this.conversionService = conversionService;
     }
 
+    // region Create
+
     @Override
-    public RelationshipResponse upsert(String accountUrn, RelationshipUpsert upsertRelationship) {
-
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
-
-        UUID existingEntityId = getExistingEntityId(accountId, upsertRelationship);
-
-        RelationshipEntity entity = conversionService.convert(upsertRelationship, RelationshipEntity.class);
-        entity.setId(existingEntityId);
-        entity.setAccountId(accountId);
-        entity = persist(entity);
-
-        return conversionService.convert(entity, RelationshipResponse.class);
+    public Optional<RelationshipResponse> create(String tenantUrn, RelationshipCreate createRelationship) throws ConstraintViolationException {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
-    public Optional<RelationshipResponse> findByUrn(String accountUrn, String urn) {
+    // endregion
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+    // region Delete
+
+    @Override
+    public List<RelationshipResponse> delete(String tenantUrn, String urn) {
+
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
+
+        List<RelationshipEntity> deleteList = new ArrayList<>();
+        try {
+            UUID uuid = UuidUtil.getUuidFromUrn(urn);
+            deleteList = relationshipRepository.deleteByTenantIdAndId(accountId, uuid);
+        } catch (IllegalArgumentException e) {
+            // empty list will be returned anyway
+            log.warn("Illegal URN submitted: %s by account %s", urn, tenantUrn);
+        }
+
+        return convert(deleteList);
+    }
+
+    // endregion
+
+    // region Find specific / by URN
+
+    @Override
+    public Optional<RelationshipResponse> findByUrn(String tenantUrn, String urn) {
+
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         Optional<RelationshipEntity> entity = Optional.empty();
         try {
             UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            entity = relationshipRepository.findByAccountIdAndId(accountId, uuid);
+            entity = relationshipRepository.findByTenantIdAndId(accountId, uuid);
         }
         catch (IllegalArgumentException e) {
             // Optional.empty() will be returned anyway
-            log.warn("Illegal URN submitted: %s by account %s", urn, accountUrn);
+            log.warn("Illegal URN submitted: %s by account %s", urn, tenantUrn);
         }
 
         if (entity.isPresent()) {
@@ -77,13 +95,13 @@ public class RelationshipPersistenceService implements RelationshipDao {
     }
 
     @Override
-    public Optional<RelationshipResponse> findSpecific(String accountUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
+    public Optional<RelationshipResponse> findSpecific(String tenantUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         Optional<RelationshipEntity> entity = Optional.empty();
         try {
-            entity = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            entity = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -92,7 +110,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 UuidUtil.getUuidFromUrn(relatedReferenceUrn));
         } catch (IllegalArgumentException e) {
             // Optional.empty() will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s, related reference URN %s", accountUrn, referenceUrn, relatedReferenceUrn);
+            log.warn("Illegal URN submitted by account %s: reference URN %s, related reference URN %s", tenantUrn, referenceUrn, relatedReferenceUrn);
         }
 
         if (entity.isPresent()) {
@@ -103,31 +121,60 @@ public class RelationshipPersistenceService implements RelationshipDao {
         return Optional.empty();
     }
 
+    // endregion
+
+    // region Find Between
+
     @Override
-    public List<RelationshipResponse> delete(String accountUrn, String urn) {
+    public Page<RelationshipResponse> findBetweenEntities(String tenantUrn, String sourceType, String sourceUrn, String targetType, String targetUrn, Integer page, Integer size) {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+    // endregion
 
-        List<RelationshipEntity> deleteList = new ArrayList<>();
-        try {
-            UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, uuid);
-        } catch (IllegalArgumentException e) {
-            // empty list will be returned anyway
-            log.warn("Illegal URN submitted: %s by account %s", urn, accountUrn);
-        }
+    // region Find By Type
 
-        return getResponseList(deleteList);
+    @Override
+    public Page<RelationshipResponse> findByTypeForSource(String tenantUrn, String sourceType, String sourceUrn, String relationshipType, Integer page, Integer size) {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public List<RelationshipResponse> findBetweenEntities(String accountUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn) {
+    public Page<RelationshipResponse> findByTypeForTarget(String tenantUrn, String targetType, String targetUrn, String relationshipType, Integer page, Integer size) {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+    // endregion
+
+    // region Find All
+
+    @Override
+    public Page<RelationshipResponse> findAllForSource(String tenantUrn, String sourceType, String sourceUrn, Integer page, Integer size) {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Page<RelationshipResponse> findAllForTarget(String tenantUrn, String targetType, String targetUrn, Integer page, Integer size) {
+        // TODO: Implement method
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    // endregion
+
+    // region v2 implementations
+
+    @Deprecated
+    public List<RelationshipResponse> findBetweenEntities(String tenantUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn) {
+
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -135,133 +182,74 @@ public class RelationshipPersistenceService implements RelationshipDao {
                 UuidUtil.getUuidFromUrn(relatedReferenceUrn));
         } catch (IllegalArgumentException e) {
             // empty list will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s, related reference URN %s", accountUrn, referenceUrn, relatedReferenceUrn);
+            log.warn("Illegal URN submitted by account %s: reference URN %s, related reference URN %s", tenantUrn, referenceUrn, relatedReferenceUrn);
         }
 
-        return getResponseList(entityList);
+        return convert(entityList);
     }
 
-    @Override
-    public List<RelationshipResponse> findByType(String accountUrn, String entityReferenceType, String referenceUrn, String type) {
+    @Deprecated
+    public List<RelationshipResponse> findByType(String tenantUrn, String entityReferenceType, String referenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
                 type);
         } catch (IllegalArgumentException e) {
             // empty list will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
+            log.warn("Illegal URN submitted by account %s: reference URN %s", tenantUrn, referenceUrn);
         }
 
-        return getResponseList(entityList);
+        return convert(entityList);
     }
 
-    @Override
-    public List<RelationshipResponse> findByTypeReverse(String accountUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
+    @Deprecated
+    public List<RelationshipResponse> findByTypeReverse(String tenantUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
+            entityList = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
                 accountId,
                 relatedEntityReferenceType,
                 UuidUtil.getUuidFromUrn(relatedReferenceUrn),
                 type);
         } catch (IllegalArgumentException e) {
             // empty will be returned anyway
-            log.warn("Illegal URN submitted by account %s: related reference URN %s", accountUrn, relatedReferenceUrn);
+            log.warn("Illegal URN submitted by account %s: related reference URN %s", tenantUrn, relatedReferenceUrn);
         }
 
-        return getResponseList(entityList);
+        return convert(entityList);
     }
 
-    @Override
-    public List<RelationshipResponse> findAll(String accountUrn, String entityReferenceType, String referenceUrn) {
+    @Deprecated
+    public List<RelationshipResponse> findAll(String tenantUrn, String entityReferenceType, String referenceUrn) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn));
         } catch (IllegalArgumentException e) {
             // empty will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
+            log.warn("Illegal URN submitted by account %s: reference URN %s", tenantUrn, referenceUrn);
         }
 
-        return getResponseList(entityList);
+        return convert(entityList);
     }
 
-    @Override
-    public List<RelationshipResponse> findAll(String accountUrn, String entityReferenceType, String referenceUrn, Boolean checkReciprocal) {
+    // endregion
 
-        List<RelationshipResponse> responseList = new ArrayList<>();
-
-        if (BooleanUtils.isTrue(checkReciprocal)) {
-            UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
-
-            try {
-                List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
-                    accountId,
-                    entityReferenceType,
-                    UuidUtil.getUuidFromUrn(referenceUrn));
-
-                return entityList.stream()
-                    .map(o -> convertAndIncludeReciprocalFlag(accountId, o))
-                    .collect(Collectors.toList());
-            } catch (IllegalArgumentException e) {
-                // empty list will be returned anyway
-                log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
-            }
-        } else {
-            responseList = findAllSymmetric(accountUrn, entityReferenceType, referenceUrn);
-        }
-
-        return responseList;
-    }
-
-    @Override
-    public List<RelationshipResponse> findAllSymmetric(String accountUrn, String entityReferenceType, String referenceUrn) {
-
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(accountUrn);
-
-        List<RelationshipResponse> resultList = new ArrayList<>();
-        try {
-            List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
-                accountId,
-                entityReferenceType,
-                UuidUtil.getUuidFromUrn(referenceUrn));
-
-            for (RelationshipEntity entity : entityList) {
-                Optional<RelationshipEntity> reciprocal = findReciprocalRelationshipEntity(accountId, entity);
-                if (reciprocal.isPresent()) {
-                    resultList.add(conversionService.convert(entity, RelationshipResponse.class));
-                    resultList.add(conversionService.convert(reciprocal.get(), RelationshipResponse.class));
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            // empty will be returned anyway
-            log.warn("Illegal URN submitted by account %s: reference URN %s", accountUrn, referenceUrn);
-        }
-
-        return resultList;
-    }
-
-    private RelationshipResponse convertAndIncludeReciprocalFlag(UUID accountId, RelationshipEntity entity) {
-        RelationshipResponse response = conversionService.convert(entity, RelationshipResponse.class);
-        response.setReciprocal(findReciprocalRelationshipEntity(accountId, entity).isPresent());
-
-        return response;
-    }
-
+    // region Helper Methods
 
     /**
      * Saves an object entity in an {@link RelationshipRepository}.
@@ -280,37 +268,16 @@ public class RelationshipPersistenceService implements RelationshipDao {
             if (ExceptionUtils.getRootCause(e) instanceof ConstraintViolationException) {
                 throw (ConstraintViolationException) ExceptionUtils.getRootCause(e);
             } else {
-
                 throw e;
             }
         }
     }
 
-    private UUID getExistingEntityId(UUID accountId, RelationshipUpsert upsertRelationship) {
-        Optional<RelationshipEntity> existingEntity = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-            accountId,
-            upsertRelationship.getEntityReferenceType(),
-            UuidUtil.getUuidFromUrn(upsertRelationship.getReferenceUrn()),
-            upsertRelationship.getType(),
-            upsertRelationship.getRelatedEntityReferenceType(),
-            UuidUtil.getUuidFromUrn(upsertRelationship.getRelatedReferenceUrn()));
-
-        return (existingEntity.isPresent() ? existingEntity.get().getId() : null);
-    }
-
-    private Optional<RelationshipEntity> findReciprocalRelationshipEntity(UUID accountId, RelationshipEntity entity) {
-        return relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-            accountId,
-            entity.getRelatedEntityReferenceType(),
-            entity.getRelatedReferenceId(),
-            entity.getType(),
-            entity.getEntityReferenceType(),
-            entity.getReferenceId());
-    }
-
-    private List<RelationshipResponse> getResponseList(List<RelationshipEntity> entityList) {
+    private List<RelationshipResponse> convert(List<RelationshipEntity> entityList) {
         return entityList.stream()
             .map(o -> conversionService.convert(o, RelationshipResponse.class))
             .collect(Collectors.toList());
     }
+
+    // endregion
 }

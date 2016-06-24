@@ -3,13 +3,11 @@ package net.smartcosmos.dao.relationships.impl;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceConfig;
 import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
-import net.smartcosmos.dto.relationships.RelationshipResponse;
-import net.smartcosmos.dto.relationships.RelationshipUpsert;
 import net.smartcosmos.security.user.SmartCosmosUser;
 import net.smartcosmos.util.UuidUtil;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
-
+import java.util.Arrays;
+import java.util.UUID;
 
 /**
  *
@@ -35,6 +30,7 @@ import static org.junit.Assert.*;
  * actually called. It's a minor setback with Spring, one that just requires some diligent
  * testing.accountId
  */
+@Ignore
 @SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {
@@ -73,6 +69,7 @@ public class RelationshipPersistanceServiceTest {
         relationshipRepository.deleteAll();
     }
 
+    /*
     @Test
     public void testCreate() {
         final String TEST_ENTITY = "urn:uuid:" + UuidUtil.getNewUuidAsString();
@@ -108,6 +105,7 @@ public class RelationshipPersistanceServiceTest {
         final String TEST_REFERENCE_TYPE = "Thing";
         final String TEST_RELATIONSHIP_TYPE = "Found by URN";
         final String TEST_MONIKER = "Moniker";
+
 
         RelationshipUpsert relationshipCreate = RelationshipUpsert.builder()
             .entityReferenceType(TEST_REFERENCE_TYPE)
@@ -476,4 +474,5 @@ public class RelationshipPersistanceServiceTest {
         assertFalse(urnList.contains(nonReflexiveUrn1));
         assertFalse(urnList.contains(nonReflexiveUrn2));
     }
+    */
 }
