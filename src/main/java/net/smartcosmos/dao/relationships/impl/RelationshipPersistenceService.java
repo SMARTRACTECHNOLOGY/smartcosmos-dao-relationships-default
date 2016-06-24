@@ -5,10 +5,10 @@ import net.smartcosmos.dao.relationships.RelationshipDao;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
+import net.smartcosmos.dao.relationships.util.UuidUtil;
 import net.smartcosmos.dto.relationships.Page;
 import net.smartcosmos.dto.relationships.RelationshipCreate;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
-import net.smartcosmos.util.UuidUtil;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -53,12 +53,12 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public List<RelationshipResponse> delete(String tenantUrn, String urn) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> deleteList = new ArrayList<>();
         try {
             UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, uuid);
+            deleteList = relationshipRepository.deleteByTenantIdAndId(accountId, uuid);
         } catch (IllegalArgumentException e) {
             // empty list will be returned anyway
             log.warn("Illegal URN submitted: %s by account %s", urn, tenantUrn);
@@ -74,12 +74,12 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public Optional<RelationshipResponse> findByUrn(String tenantUrn, String urn) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         Optional<RelationshipEntity> entity = Optional.empty();
         try {
             UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            entity = relationshipRepository.findByAccountIdAndId(accountId, uuid);
+            entity = relationshipRepository.findByTenantIdAndId(accountId, uuid);
         }
         catch (IllegalArgumentException e) {
             // Optional.empty() will be returned anyway
@@ -97,11 +97,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public Optional<RelationshipResponse> findSpecific(String tenantUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         Optional<RelationshipEntity> entity = Optional.empty();
         try {
-            entity = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            entity = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -170,11 +170,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Deprecated
     public List<RelationshipResponse> findBetweenEntities(String tenantUrn, String entityReferenceType, String referenceUrn, String relatedEntityReferenceType, String relatedReferenceUrn) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -191,11 +191,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Deprecated
     public List<RelationshipResponse> findByType(String tenantUrn, String entityReferenceType, String referenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn),
@@ -211,11 +211,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Deprecated
     public List<RelationshipResponse> findByTypeReverse(String tenantUrn, String relatedEntityReferenceType, String relatedReferenceUrn, String type) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
+            entityList = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
                 accountId,
                 relatedEntityReferenceType,
                 UuidUtil.getUuidFromUrn(relatedReferenceUrn),
@@ -231,11 +231,11 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Deprecated
     public List<RelationshipResponse> findAll(String tenantUrn, String entityReferenceType, String referenceUrn) {
 
-        UUID accountId = UuidUtil.getUuidFromAccountUrn(tenantUrn);
+        UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
 
         List<RelationshipEntity> entityList = new ArrayList<>();
         try {
-            entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+            entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
                 accountId,
                 entityReferenceType,
                 UuidUtil.getUuidFromUrn(referenceUrn));

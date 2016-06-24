@@ -16,24 +16,24 @@ public interface RelationshipRepository extends
         QueryByExampleExecutor<RelationshipEntity>,
         JpaSpecificationExecutor<RelationshipEntity>
 {
-    Optional<RelationshipEntity> findByAccountIdAndId(UUID accountId, UUID id);
+    Optional<RelationshipEntity> findByTenantIdAndId(UUID accountId, UUID id);
 
-    Optional<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-        UUID accountId,
-        String entityReferenceType,
-        UUID referenceId,
-        String type,
+    Optional<RelationshipEntity> findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
+        UUID tenantId,
+        String sourceType,
+        UUID sourceId,
+        String relationshipType,
         String relatedEntityReferenceType,
         UUID relatedReferenceId);
 
-    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(UUID accountId, String entityReferenceType, UUID referenceId, String type);
+    List<RelationshipEntity> findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(UUID tenantId, String sourceType, UUID sourceId, String relationshipType);
 
-    List<RelationshipEntity> findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(UUID accountId, String relatedEntityReferenceType, UUID relatedReferenceId, String type);
+    List<RelationshipEntity> findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(UUID tenantId, String relatedEntityReferenceType, UUID relatedReferenceId, String relationshipType);
 
-    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(UUID accountId, String entityReferenceType, UUID referenceId, String relatedEntityReferenceType, UUID relatedReferenceId);
+    List<RelationshipEntity> findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(UUID tenantId, String sourceType, UUID sourceId, String targetType, UUID targetId);
 
-    List<RelationshipEntity> findByAccountIdAndEntityReferenceTypeAndReferenceId(UUID accountId, String entityReferenceType, UUID referenceId);
+    List<RelationshipEntity> findByTenantIdAndSourceTypeAndSourceId(UUID tenantId, String sourceType, UUID sourceId);
 
     @Transactional
-    List<RelationshipEntity> deleteByAccountIdAndId(UUID accountId, UUID id);
+    List<RelationshipEntity> deleteByTenantIdAndId(UUID accountId, UUID id);
 }

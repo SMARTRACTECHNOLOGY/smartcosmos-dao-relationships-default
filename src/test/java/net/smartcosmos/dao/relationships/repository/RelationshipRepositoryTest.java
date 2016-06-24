@@ -70,15 +70,15 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void findByAccountIdAndId() throws Exception {
-        assertTrue(this.relationshipRepository.findByAccountIdAndId(tenantId, id).isPresent());
+    public void findByTenantIdAndId() throws Exception {
+        assertTrue(this.relationshipRepository.findByTenantIdAndId(tenantId, id).isPresent());
     }
 
     @Test
-    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId()
+    public void findByTenantIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId()
             throws Exception {
 
-        assertTrue(this.relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+        assertTrue(this.relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
                 tenantId,
                 TEST_REFERENCE_TYPE,
                 referenceId,
@@ -89,9 +89,9 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType() {
+    public void findByTenantIdAndEntityReferenceTypeAndReferenceIdAndType() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
+        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
             tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
@@ -106,9 +106,9 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void findByAccountIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
+    public void findByTenantIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
+        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
             tenantId,
             TEST_REFERENCE_TYPE,
             relatedReferenceId,
@@ -123,9 +123,9 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedEntityReferenceId() {
+    public void findByTenantIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedEntityReferenceId() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
+        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
             tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
@@ -141,9 +141,9 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void findByAccountIdAndEntityReferenceTypeAndReferenceId() {
+    public void findByTenantIdAndEntityReferenceTypeAndReferenceId() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
+        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
             tenantId,
             TEST_REFERENCE_TYPE,
             referenceId);
@@ -157,8 +157,8 @@ public class RelationshipRepositoryTest {
     }
 
     @Test
-    public void deleteByAccountIdAndId() {
-        List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(tenantId, id);
+    public void deleteByTenantIdAndId() {
+        List<RelationshipEntity> deleteList = relationshipRepository.deleteByTenantIdAndId(tenantId, id);
 
         assertFalse(deleteList.isEmpty());
         assertEquals(1, deleteList.size());
