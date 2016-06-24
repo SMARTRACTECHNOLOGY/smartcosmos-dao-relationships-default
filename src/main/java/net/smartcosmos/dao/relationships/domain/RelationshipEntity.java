@@ -17,15 +17,18 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.beans.ConstructorProperties;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "relationship")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
+@Builder
 @EntityListeners({ AuditingEntityListener.class })
 @Table(name = "relationship") // , uniqueConstraints = @UniqueConstraint(columnNames = { "objectUrn", "accountUuid" }) )
 public class RelationshipEntity implements Serializable {
@@ -33,7 +36,6 @@ public class RelationshipEntity implements Serializable {
     private static final int UUID_LENGTH = 16;
     private static final int ENTITYREFERENCETYPE_LENGTH = 255;
     private static final int TYPE_LENGTH = 255;
-    private static final int MONIKER_LENGTH = 2048;
     private static final int NAME_LENGTH = 255;
     private static final int DESCRIPTION_LENGTH = 1024;
 
@@ -49,81 +51,46 @@ public class RelationshipEntity implements Serializable {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Type(type = "uuid-binary")
-    @Column(name = "systemUuid", length = UUID_LENGTH)
+    @Column(name = "id", length = UUID_LENGTH)
     private UUID id;
 
     @NotEmpty
     @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="entityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
-    private String entityReferenceType;
+    @Column(name="sourceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
+    private String sourceType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="referenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID referenceId;
+    @Column(name="sourceId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID sourceId;
 
     @NotEmpty
     @Size(max = TYPE_LENGTH)
     @Column(name = "type", length = TYPE_LENGTH, nullable = false, updatable = false)
-    private String type;
+    private String relationshipType;
 
     @NotEmpty
     @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="relatedEntityReferenceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
-    private String relatedEntityReferenceType;
+    @Column(name="targetType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
+    private String targetType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="relatedReferenceUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID relatedReferenceId;
+    @Column(name="targetId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID targetId;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name = "accountUuid", length = UUID_LENGTH, nullable = false, updatable = false)
-    private UUID accountId;
+    @Column(name = "tenantId", length = UUID_LENGTH, nullable = false, updatable = false)
+    private UUID tenantId;
 
     @CreatedDate
-    @Column(name = "createdTimestamp", insertable = true, updatable = false)
-    private Long created;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created", insertable = true, updatable = false)
+    private Date created;
 
     @LastModifiedDate
-    @Column(name = "lastModifiedTimestamp", nullable = false, insertable = true, updatable = true)
-    private Long lastModified;
-
-    @Size(max = MONIKER_LENGTH)
-    @Column(name = "moniker", length = MONIKER_LENGTH, nullable = true, updatable = true)
-    private String moniker;
-
-    /*
-        Lombok's @Builder is not able to deal with field initialization default values. That's a known issue which won't get fixed:
-        https://github.com/rzwitserloot/lombok/issues/663
-
-        We therefore provide our own AllArgsConstructor that is used by the generated builder and takes care of field initialization.
-     */
-    @Builder
-    @ConstructorProperties({"id", "entityReferenceType", "referenceId", "type",
-        "relatedEntityReferenceType", "relatedReferenceId", "accountId", "created", "lastModified", "moniker"})
-    protected RelationshipEntity(
-            UUID id,
-            String entityReferenceType,
-            UUID referenceId,
-            String type,
-            String relatedEntityReferenceType,
-            UUID relatedReferenceId,
-            UUID accountId,
-            Long created,
-            Long lastModified,
-            String moniker)
-    {
-        this.id = id;
-        this.entityReferenceType = entityReferenceType;
-        this.referenceId = referenceId;
-        this.type = type;
-        this.relatedEntityReferenceType = relatedEntityReferenceType;
-        this.relatedReferenceId = relatedReferenceId;
-        this.accountId = accountId;
-        this.created = created;
-        this.lastModified = lastModified;
-        this.moniker = moniker;
-    }
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lastModified", nullable = false, insertable = true, updatable = true)
+    private Date lastModified;
 }
