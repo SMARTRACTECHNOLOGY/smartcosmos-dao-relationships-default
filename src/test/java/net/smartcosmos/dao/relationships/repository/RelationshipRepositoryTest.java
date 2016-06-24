@@ -37,7 +37,6 @@ public class RelationshipRepositoryTest {
 
     final String TEST_REFERENCE_TYPE = "Thing";
     final String TEST_RELATIONSHIP_TYPE = "Contains";
-    final String TEST_MONIKER = "Moniker";
 
     @Autowired
     RelationshipRepository relationshipRepository;
