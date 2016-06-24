@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  *
  * Sometimes these runtime created methods have issues that don't come up until they're
  * actually called. It's a minor setback with Spring, one that just requires some diligent
- * testing.accountId
+ * testing.tenantId
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {
@@ -41,7 +41,7 @@ public class RelationshipRepositoryTest {
 
     @Autowired
     RelationshipRepository relationshipRepository;
-    final UUID accountId = UUID.randomUUID();
+    final UUID tenantId = UUID.randomUUID();
     private UUID id;
     private UUID referenceId;
     private UUID relatedReferenceId;
@@ -52,13 +52,12 @@ public class RelationshipRepositoryTest {
         relatedReferenceId = UuidUtil.getNewUuid();
 
         RelationshipEntity entity = RelationshipEntity.builder()
-                .accountId(accountId)
-                .entityReferenceType(TEST_REFERENCE_TYPE)
-                .referenceId(referenceId)
-                .type(TEST_RELATIONSHIP_TYPE)
-                .relatedEntityReferenceType(TEST_REFERENCE_TYPE)
-                .relatedReferenceId(relatedReferenceId)
-                .moniker(TEST_MONIKER)
+                .tenantId(tenantId)
+                .sourceType(TEST_REFERENCE_TYPE)
+                .sourceId(referenceId)
+                .relationshipType(TEST_RELATIONSHIP_TYPE)
+                .targetType(TEST_REFERENCE_TYPE)
+                .targetId(relatedReferenceId)
                 .build();
 
         entity = relationshipRepository.save(entity);
@@ -72,7 +71,7 @@ public class RelationshipRepositoryTest {
 
     @Test
     public void findByAccountIdAndId() throws Exception {
-        assertTrue(this.relationshipRepository.findByAccountIdAndId(accountId, id).isPresent());
+        assertTrue(this.relationshipRepository.findByAccountIdAndId(tenantId, id).isPresent());
     }
 
     @Test
@@ -80,7 +79,7 @@ public class RelationshipRepositoryTest {
             throws Exception {
 
         assertTrue(this.relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndTypeAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-                accountId,
+                tenantId,
                 TEST_REFERENCE_TYPE,
                 referenceId,
                 TEST_RELATIONSHIP_TYPE,
@@ -93,7 +92,7 @@ public class RelationshipRepositoryTest {
     public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType() {
 
         List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndType(
-            accountId,
+            tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
             TEST_RELATIONSHIP_TYPE);
@@ -103,14 +102,14 @@ public class RelationshipRepositoryTest {
 
         RelationshipEntity entity = entityList.get(0);
         assertEquals(id, entity.getId());
-        assertEquals(accountId, entity.getAccountId());
+        assertEquals(tenantId, entity.getTenantId());
     }
 
     @Test
     public void findByAccountIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
 
         List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndRelatedEntityReferenceTypeAndRelatedReferenceIdAndType(
-            accountId,
+            tenantId,
             TEST_REFERENCE_TYPE,
             relatedReferenceId,
             TEST_RELATIONSHIP_TYPE);
@@ -120,14 +119,14 @@ public class RelationshipRepositoryTest {
 
         RelationshipEntity entity = entityList.get(0);
         assertEquals(id, entity.getId());
-        assertEquals(accountId, entity.getAccountId());
+        assertEquals(tenantId, entity.getTenantId());
     }
 
     @Test
     public void findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedEntityReferenceId() {
 
         List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedReferenceId(
-            accountId,
+            tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
             TEST_REFERENCE_TYPE,
@@ -138,14 +137,14 @@ public class RelationshipRepositoryTest {
 
         RelationshipEntity entity = entityList.get(0);
         assertEquals(id, entity.getId());
-        assertEquals(accountId, entity.getAccountId());
+        assertEquals(tenantId, entity.getTenantId());
     }
 
     @Test
     public void findByAccountIdAndEntityReferenceTypeAndReferenceId() {
 
         List<RelationshipEntity> entityList = relationshipRepository.findByAccountIdAndEntityReferenceTypeAndReferenceId(
-            accountId,
+            tenantId,
             TEST_REFERENCE_TYPE,
             referenceId);
 
@@ -154,18 +153,18 @@ public class RelationshipRepositoryTest {
 
         RelationshipEntity entity = entityList.get(0);
         assertEquals(id, entity.getId());
-        assertEquals(accountId, entity.getAccountId());
+        assertEquals(tenantId, entity.getTenantId());
     }
 
     @Test
     public void deleteByAccountIdAndId() {
-        List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(accountId, id);
+        List<RelationshipEntity> deleteList = relationshipRepository.deleteByAccountIdAndId(tenantId, id);
 
         assertFalse(deleteList.isEmpty());
         assertEquals(1, deleteList.size());
 
         RelationshipEntity entity = deleteList.get(0);
         assertEquals(id, entity.getId());
-        assertEquals(accountId, entity.getAccountId());
+        assertEquals(tenantId, entity.getTenantId());
     }
 }

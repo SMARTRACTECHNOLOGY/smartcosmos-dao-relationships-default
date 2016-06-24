@@ -39,13 +39,12 @@ public class RelationshipEntityTest {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .relationshipType(TYPE)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -54,34 +53,16 @@ public class RelationshipEntityTest {
     }
 
     @Test
-    public void thatNullMonikerIsOk() {
+    public void thatEmptySourceTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .accountId(ACCOUNT_ID)
-            .build();
-
-        Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
-
-        assertTrue(violationSet.isEmpty());
-    }
-
-    @Test
-    public void thatEmptyEntityReferenceTypeIsFailure() {
-
-        RelationshipEntity relationshipEntity = RelationshipEntity.builder()
-            .id(ID)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceId(ID)
+            .sourceType("")
+            .relationshipType(TYPE)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -90,20 +71,19 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("entityReferenceType", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("sourceType", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatNullReferenceIdIsFailure() {
+    public void thatNullSourceIdIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .relationshipType(TYPE)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -112,20 +92,19 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.NotNull.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("referenceId", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("sourceId", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatEmptyTypeIsFailure() {
+    public void thatEmptyRelationshipTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -134,20 +113,20 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("type", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("relationshipType", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatEmptyRelatedEntityReferenceTypeIsFailure() {
+    public void thatEmptyTargetTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .relationshipType(TYPE)
+            .targetId(ID)
+            .targetType("")
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -156,20 +135,19 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("relatedEntityReferenceType", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("targetType", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatNullRelatedReferenceIdIsFailure() {
+    public void thatNullTargetIdIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .relationshipType(TYPE)
+            .targetType(TYPE)
+            .tenantId(ACCOUNT_ID)
             .build();
 
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
@@ -178,21 +156,20 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.NotNull.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("relatedReferenceId", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("targetId", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatInvalidEntityReferenceTypeIsFailure() {
+    public void thatInvalidSourceTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE_INVALID)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE_INVALID)
+            .sourceId(ID)
+            .relationshipType(TYPE)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
 
@@ -200,21 +177,20 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("entityReferenceType", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("sourceType", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatInvalidTypeIsFailure() {
+    public void thatInvalidRelationshipTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE_INVALID)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .relationshipType(TYPE_INVALID)
+            .targetType(TYPE)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
 
@@ -222,21 +198,20 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("type", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("relationshipType", violationSet.iterator().next().getPropertyPath().toString());
     }
 
     @Test
-    public void thatInvalidRelatedEntityReferenceTypeIsFailure() {
+    public void thatInvalidTargetTypeIsFailure() {
 
         RelationshipEntity relationshipEntity = RelationshipEntity.builder()
             .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE_INVALID)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER)
-            .accountId(ACCOUNT_ID)
+            .sourceType(TYPE)
+            .sourceId(ID)
+            .relationshipType(TYPE)
+            .targetType(TYPE_INVALID)
+            .targetId(ID)
+            .tenantId(ACCOUNT_ID)
             .build();
         Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
 
@@ -244,28 +219,6 @@ public class RelationshipEntityTest {
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
             violationSet.iterator().next().getMessageTemplate());
-        assertEquals("relatedEntityReferenceType", violationSet.iterator().next().getPropertyPath().toString());
-    }
-
-    @Test
-    public void thatInvalidMonikerIsFailure() {
-
-        RelationshipEntity relationshipEntity = RelationshipEntity.builder()
-            .id(ID)
-            .entityReferenceType(TYPE)
-            .referenceId(ID)
-            .type(TYPE)
-            .relatedEntityReferenceType(TYPE)
-            .relatedReferenceId(ID)
-            .moniker(MONIKER_INVALID)
-            .accountId(ACCOUNT_ID)
-            .build();
-        Set<ConstraintViolation<RelationshipEntity>> violationSet = validator.validate(relationshipEntity);
-
-        assertFalse(violationSet.isEmpty());
-        assertEquals(1, violationSet.size());
-        assertEquals("{javax.validation.constraints.Size.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("moniker", violationSet.iterator().next().getPropertyPath().toString());
+        assertEquals("targetType", violationSet.iterator().next().getPropertyPath().toString());
     }
 }
