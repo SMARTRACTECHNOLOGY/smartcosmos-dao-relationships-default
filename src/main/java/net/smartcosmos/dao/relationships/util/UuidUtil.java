@@ -1,10 +1,10 @@
 package net.smartcosmos.dao.relationships.util;
 
+import com.fasterxml.uuid.Generators;
+
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.fasterxml.uuid.Generators;
 
 public class UuidUtil {
 
@@ -16,6 +16,7 @@ public class UuidUtil {
     private static final String TENANT_PREFIX = "tenant";
     private static final String USER_PREFIX = "user";
     private static final String THING_PREFIX = "thing";
+    private static final String RELATIONSHIP_PREFIX = "relationship";
 
     public static UUID getUuidFromUrn(String urn) throws IllegalArgumentException {
 
@@ -40,6 +41,10 @@ public class UuidUtil {
 
     public static String getUserUrnFromUuid(UUID uuid) {
         return getPrefixUrnFromUuid(USER_PREFIX, uuid);
+    }
+
+    public static String getRelationshipUrnFromUuid(UUID uuid) {
+        return getPrefixUrnFromUuid(RELATIONSHIP_PREFIX, uuid);
     }
 
     static String getPrefixUrnFromUuid(String prefix, UUID uuid) {
