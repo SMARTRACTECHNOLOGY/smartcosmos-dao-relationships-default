@@ -1,8 +1,8 @@
 package net.smartcosmos.dao.relationships.converter;
 
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
-import net.smartcosmos.dto.relationships.RelationshipUpsert;
-import net.smartcosmos.util.UuidUtil;
+import net.smartcosmos.dao.relationships.util.UuidUtil;
+import net.smartcosmos.dto.relationships.RelationshipCreate;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistrar;
 import org.springframework.format.FormatterRegistry;
@@ -11,20 +11,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RelationshipCreateToRelationshipEntityConverter
-        implements Converter<RelationshipUpsert, RelationshipEntity>, FormatterRegistrar {
+        implements Converter<RelationshipCreate, RelationshipEntity>, FormatterRegistrar {
 
     @Override
-    public RelationshipEntity convert(RelationshipUpsert relationshipUpsert) {
+    public RelationshipEntity convert(RelationshipCreate createRelationship) {
 
         return RelationshipEntity.builder()
-                // Required
-                .entityReferenceType(relationshipUpsert.getEntityReferenceType())
-                .referenceId(UuidUtil.getUuidFromUrn(relationshipUpsert.getReferenceUrn()))
-                .type(relationshipUpsert.getType())
-                .relatedEntityReferenceType(relationshipUpsert.getRelatedEntityReferenceType())
-                .relatedReferenceId(UuidUtil.getUuidFromUrn(relationshipUpsert.getRelatedReferenceUrn()))
-                // Optional
-                .moniker(relationshipUpsert.getMoniker()).build();
+            .sourceType(createRelationship.getSource().getType())
+            .sourceId(UuidUtil.getUuidFromUrn(createRelationship.getSource().getUrn()))
+            .relationshipType(createRelationship.getRelationshipType())
+            .targetType(createRelationship.getTarget().getType())
+            .targetId(UuidUtil.getUuidFromUrn(createRelationship.getTarget().getUrn()))
+            .build();
     }
 
     @Override
