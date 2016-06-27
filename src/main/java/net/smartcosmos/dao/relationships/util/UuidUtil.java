@@ -73,4 +73,8 @@ public class UuidUtil {
 
         return UUID.fromString(sortedUuidString);
     }
+
+    public static String getNewUuidAsString() {
+        return getNewUuid().toString();
+    }
 }

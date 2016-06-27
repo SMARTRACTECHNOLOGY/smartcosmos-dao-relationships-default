@@ -73,16 +73,15 @@ public class RelationshipPersistenceService implements RelationshipDao {
     public List<RelationshipResponse> delete(String tenantUrn, String urn) {
 
         UUID tenantId = UuidUtil.getUuidFromUrn(tenantUrn);
-        List<RelationshipEntity> deleteList = new ArrayList<>();
 
         try {
             UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            deleteList = relationshipRepository.deleteByTenantIdAndId(tenantId, uuid);
+            return convertList(relationshipRepository.deleteByTenantIdAndId(tenantId, uuid));
 
         } catch (Exception e) {
             exceptionLogger("RelationshipPersistenceService:delete", e, "tenantUrn: " + tenantUrn, "urn: " + urn);
         }
-        return convertList(deleteList);
+        return new ArrayList<>();
     }
     // endregion
 
