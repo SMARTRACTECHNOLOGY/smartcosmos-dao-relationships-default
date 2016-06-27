@@ -151,9 +151,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        Sort.Direction direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        sortBy = RelationshipPersistenceUtil.getSortByFieldName(sortBy);
-        Pageable pageable = new PageRequest(page, size, direction, sortBy);
+        Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
 
         Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
 
@@ -174,6 +172,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         }
         return responsePage;
     }
+
     // endregion
 
     // region Find By Type
@@ -188,9 +187,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        Sort.Direction direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        sortBy = RelationshipPersistenceUtil.getSortByFieldName(sortBy);
-        Pageable pageable = new PageRequest(page, size, direction, sortBy);
+        Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
 
         Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
 
@@ -223,9 +220,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        Sort.Direction direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        sortBy = RelationshipPersistenceUtil.getSortByFieldName(sortBy);
-        Pageable pageable = new PageRequest(page, size, direction, sortBy);
+        Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
 
         Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
 
@@ -258,9 +253,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        Sort.Direction direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        sortBy = RelationshipPersistenceUtil.getSortByFieldName(sortBy);
-        Pageable pageable = new PageRequest(page, size, direction, sortBy);
+        Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
 
         Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
 
@@ -290,9 +283,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        Sort.Direction direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        sortBy = RelationshipPersistenceUtil.getSortByFieldName(sortBy);
-        Pageable pageable = new PageRequest(page, size, direction, sortBy);
+        Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
 
         Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
 
@@ -343,17 +334,23 @@ public class RelationshipPersistenceService implements RelationshipDao {
             .collect(Collectors.toList());
     }
 
-//    private Page<RelationshipResponse> convertPage(Page<RelationshipEntity> entityPage) {
-//
-//        Page<RelationshipResponse> responsePage = RelationshipPersistenceUtil.emptyPage();
-//        List<RelationshipResponse> responseData = new ArrayList<>();
-//
-//        for (RelationshipEntity entity: entityPage.getData()) {
-//            responseData.add(conversionService.convert(entity, RelationshipResponse.class));
-//        }
-//
-//        responsePage = Page.builder().page(entityPage.getPage()).data(responseData).build();
-//    }
+    private Pageable buildPageable(Integer page, Integer size, SortOrder sortOrder, String sortBy) {
+
+        Sort.Direction direction = Sort.DEFAULT_DIRECTION; // TODO default value to service config
+        if (sortOrder != null) {
+            direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
+        }
+        if (sortBy == null) {
+            sortBy = RelationshipPersistenceUtil.getSortByFieldName("created"); // TODO default value to service config
+        }
+        if (page == null) {
+            page = 0; // TODO default value to service config
+        }
+        if (size == null) {
+            size = 20; // TODO default value to service config
+        }
+        return new PageRequest(page, size, direction, sortBy);
+    }
 
 
     private boolean alreadyExists(String accountUrn, RelationshipCreate createRelationship) {

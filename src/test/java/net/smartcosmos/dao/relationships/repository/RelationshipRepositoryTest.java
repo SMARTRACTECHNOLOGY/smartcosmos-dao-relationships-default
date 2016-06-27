@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -90,16 +92,16 @@ public class RelationshipRepositoryTest {
     @Test
     public void findByTenantIdAndEntityReferenceTypeAndReferenceIdAndType() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
+        Page<RelationshipEntity> entityPage = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
             tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
-            TEST_RELATIONSHIP_TYPE);
+            TEST_RELATIONSHIP_TYPE,
+            new PageRequest(0, 1));
 
-        assertFalse(entityList.isEmpty());
-        assertEquals(1, entityList.size());
+        assertEquals(1, entityPage.getTotalPages());
 
-        RelationshipEntity entity = entityList.get(0);
+        RelationshipEntity entity = entityPage.getContent().get(0);
         assertEquals(id, entity.getId());
         assertEquals(tenantId, entity.getTenantId());
     }
@@ -107,16 +109,16 @@ public class RelationshipRepositoryTest {
     @Test
     public void findByTenantIdAndEntityRelatedReferenceTypeAndRelatedReferenceIdAndType() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
+        Page<RelationshipEntity> entityPage = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
             tenantId,
             TEST_REFERENCE_TYPE,
             relatedReferenceId,
-            TEST_RELATIONSHIP_TYPE);
+            TEST_RELATIONSHIP_TYPE,
+            new PageRequest(0, 1));
 
-        assertFalse(entityList.isEmpty());
-        assertEquals(1, entityList.size());
+        assertEquals(1, entityPage.getTotalPages());
 
-        RelationshipEntity entity = entityList.get(0);
+        RelationshipEntity entity = entityPage.getContent().get(0);
         assertEquals(id, entity.getId());
         assertEquals(tenantId, entity.getTenantId());
     }
@@ -124,17 +126,17 @@ public class RelationshipRepositoryTest {
     @Test
     public void findByTenantIdAndEntityReferenceTypeAndReferenceIdAndRelatedEntityReferenceTypeAndRelatedEntityReferenceId() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
+        Page<RelationshipEntity> entityPage = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
             tenantId,
             TEST_REFERENCE_TYPE,
             referenceId,
             TEST_REFERENCE_TYPE,
-            relatedReferenceId);
+            relatedReferenceId,
+            new PageRequest(0, 1));
 
-        assertFalse(entityList.isEmpty());
-        assertEquals(1, entityList.size());
+        assertEquals(1, entityPage.getTotalPages());
 
-        RelationshipEntity entity = entityList.get(0);
+        RelationshipEntity entity = entityPage.getContent().get(0);
         assertEquals(id, entity.getId());
         assertEquals(tenantId, entity.getTenantId());
     }
@@ -142,15 +144,15 @@ public class RelationshipRepositoryTest {
     @Test
     public void findByTenantIdAndEntityReferenceTypeAndReferenceId() {
 
-        List<RelationshipEntity> entityList = relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
+        Page<RelationshipEntity> entityPage = relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
             tenantId,
             TEST_REFERENCE_TYPE,
-            referenceId);
+            referenceId,
+            new PageRequest(0, 1));
 
-        assertFalse(entityList.isEmpty());
-        assertEquals(1, entityList.size());
+        assertEquals(1, entityPage.getTotalPages());
 
-        RelationshipEntity entity = entityList.get(0);
+        RelationshipEntity entity = entityPage.getContent().get(0);
         assertEquals(id, entity.getId());
         assertEquals(tenantId, entity.getTenantId());
     }
