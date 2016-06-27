@@ -32,12 +32,12 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @EntityListeners({ AuditingEntityListener.class })
-@Table(name = "relationship") // , uniqueConstraints = @UniqueConstraint(columnNames = { "objectUrn", "accountUuid" }) )
+@Table(name = "relationship")
 public class RelationshipEntity implements Serializable {
 
     private static final int UUID_LENGTH = 16;
-    private static final int ENTITYREFERENCETYPE_LENGTH = 255;
-    private static final int TYPE_LENGTH = 255;
+    private static final int SOURCE_TARGET_TYPE_LENGTH = 255;
+    private static final int RELATIONSHIP_TYPE_LENGTH = 255;
     private static final int NAME_LENGTH = 255;
     private static final int DESCRIPTION_LENGTH = 1024;
 
@@ -57,8 +57,8 @@ public class RelationshipEntity implements Serializable {
     private UUID id;
 
     @NotEmpty
-    @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="sourceType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
+    @Size(max = SOURCE_TARGET_TYPE_LENGTH)
+    @Column(name="sourceType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
     private String sourceType;
 
     @NotNull
@@ -67,13 +67,13 @@ public class RelationshipEntity implements Serializable {
     private UUID sourceId;
 
     @NotEmpty
-    @Size(max = TYPE_LENGTH)
-    @Column(name = "type", length = TYPE_LENGTH, nullable = false, updatable = false)
+    @Size(max = RELATIONSHIP_TYPE_LENGTH)
+    @Column(name = "relationshipType", length = RELATIONSHIP_TYPE_LENGTH, nullable = false, updatable = false)
     private String relationshipType;
 
     @NotEmpty
-    @Size(max = ENTITYREFERENCETYPE_LENGTH)
-    @Column(name="targetType", length = ENTITYREFERENCETYPE_LENGTH, nullable = false, updatable = false)
+    @Size(max = SOURCE_TARGET_TYPE_LENGTH)
+    @Column(name="targetType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
     private String targetType;
 
     @NotNull
