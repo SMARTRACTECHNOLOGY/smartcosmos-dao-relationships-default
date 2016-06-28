@@ -55,11 +55,20 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public Optional<RelationshipResponse> create(String tenantUrn, RelationshipCreate createRelationship) {
 
-        if (alreadyExists(tenantUrn, createRelationship)) {
-            return Optional.empty();
-        }
-
         try {
+            // If the requested object already exists, return Optional.empty()
+            Optional<RelationshipResponse> alreadyExists = findSpecific(
+                tenantUrn,
+                createRelationship.getSource().getType(),
+                createRelationship.getSource().getUrn(),
+                createRelationship.getTarget().getType(),
+                createRelationship.getTarget().getUrn(),
+                createRelationship.getRelationshipType());
+
+            if (alreadyExists.isPresent()) {
+                return Optional.empty();
+            }
+
             UUID tenantId = UuidUtil.getUuidFromUrn(tenantUrn);
             RelationshipEntity entity = conversionService.convert(createRelationship, RelationshipEntity.class);
             entity.setTenantId(tenantId);
@@ -441,28 +450,5 @@ public class RelationshipPersistenceService implements RelationshipDao {
             size = 20; // TODO default value to service config
         }
         return new PageRequest(page, size, direction, sortBy);
-    }
-
-    /**
-     * Uses the public findSpecific() method to determine whheter a relationship already exists.
-     *
-     * @param accountUrn
-     * @param createRelationship
-     * @return
-     */
-    private boolean alreadyExists(String accountUrn, RelationshipCreate createRelationship) {
-
-        Optional<RelationshipResponse> existing = findSpecific(
-            accountUrn,
-            createRelationship.getSource().getType(),
-            createRelationship.getSource().getUrn(),
-            createRelationship.getTarget().getType(),
-            createRelationship.getTarget().getUrn(),
-            createRelationship.getRelationshipType());
-
-        if (existing.isPresent()) {
-            return true;
-        }
-        return false;
     }
 }
