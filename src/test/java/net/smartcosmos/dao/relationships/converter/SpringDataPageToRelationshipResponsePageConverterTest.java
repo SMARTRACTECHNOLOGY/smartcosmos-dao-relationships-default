@@ -2,20 +2,14 @@ package net.smartcosmos.dao.relationships.converter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.sun.org.apache.regexp.internal.RE;
-
 import org.junit.*;
-import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.format.FormatterRegistrar;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
@@ -35,8 +29,14 @@ import static org.junit.Assert.*;
  */
 public class SpringDataPageToRelationshipResponsePageConverterTest extends RelationshipPersistenceTestApplication {
 
+    @Inject
+    DefaultConversionService conversionService;
+
     @Before
     public void before() throws Exception {
+
+        conversionService = new DefaultConversionService();
+        conversionService.addConverter(new SpringDataPageToRelationshipResponsePageConverter());
     }
 
     @After
@@ -69,9 +69,9 @@ public class SpringDataPageToRelationshipResponsePageConverterTest extends Relat
         List<RelationshipEntity> content = new ArrayList<>();
         content.add(relationshipEntity);
 
-        org.springframework.data.domain.PageImpl<RelationshipEntity> entityPage = new PageImpl<RelationshipEntity>(content);
-        SpringDataPageToRelationshipResponsePageConverter converter = new SpringDataPageToRelationshipResponsePageConverter();
-        Page<RelationshipResponse> convertedPage = converter.convert(entityPage);
+        Page<RelationshipResponse> emptyPage = RelationshipPersistenceUtil.emptyPage();
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage = new PageImpl<>(content);
+        Page<RelationshipResponse> convertedPage = conversionService.convert(entityPage, Page.class);
         RelationshipResponse response = convertedPage.getData().get(0);
 
         assertEquals(convertedPage.getData().size(), 1);
