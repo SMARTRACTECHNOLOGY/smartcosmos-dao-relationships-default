@@ -20,7 +20,7 @@ public class UuidUtilTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void getUuidFromInvaldiUrn() throws Exception {
+    public void getUuidFromInvalidUrn() throws Exception {
 
         final String urn = "this-is-no-valid-urn";
         UuidUtil.getUuidFromUrn(urn);
