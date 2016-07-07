@@ -3,15 +3,9 @@ package net.smartcosmos.dao.relationships.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.junit.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.data.domain.PageImpl;
 
-import net.smartcosmos.dao.relationships.RelationshipPersistenceTestApplication;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.util.RelationshipPersistenceUtil;
 import net.smartcosmos.dao.relationships.util.UuidUtil;
@@ -27,26 +21,8 @@ import static org.junit.Assert.*;
  * @version 1.0
  * @since <pre>Jun 28, 2016</pre>
  */
-public class SpringDataPageToRelationshipResponsePageConverterTest extends RelationshipPersistenceTestApplication {
+public class SpringDataPageToRelationshipResponsePageConverterTest extends AbstractConverterTest {
 
-    @Inject
-    DefaultConversionService conversionService;
-
-    @Before
-    public void before() throws Exception {
-
-        conversionService = new DefaultConversionService();
-        conversionService.addConverter(new SpringDataPageToRelationshipResponsePageConverter());
-    }
-
-    @After
-    public void after() throws Exception {
-    }
-
-    /**
-     * Method: conversionService()
-     */
-    @Ignore
     @Test
     public void testConversionService() throws Exception {
 
