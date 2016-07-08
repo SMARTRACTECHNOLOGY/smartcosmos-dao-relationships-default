@@ -12,9 +12,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -22,6 +20,7 @@ import net.smartcosmos.dao.relationships.RelationshipDao;
 import net.smartcosmos.dao.relationships.SortOrder;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.repository.RelationshipRepository;
+import net.smartcosmos.dao.relationships.util.PageableUtil;
 import net.smartcosmos.dao.relationships.util.RelationshipPersistenceUtil;
 import net.smartcosmos.dao.relationships.util.SearchSpecifications;
 import net.smartcosmos.dao.relationships.util.UuidUtil;
@@ -208,7 +207,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
         String sortBy) {
 
         try {
-            Pageable pageable = buildPageable(page, size, sortOrder, sortBy);
+            Pageable pageable = PageableUtil.buildPageable(page, size, sortOrder, sortBy);
             org.springframework.data.domain.Page<RelationshipEntity> entityPage =
                 relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
                     UuidUtil.getUuidFromUrn(tenantUrn),
@@ -260,7 +259,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     sourceType,
                     UuidUtil.getUuidFromUrn(sourceUrn),
                     relationshipType,
-                    buildPageable(page, size, sortOrder, sortBy));
+                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
             return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
 
@@ -304,7 +303,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     targetType,
                     UuidUtil.getUuidFromUrn(targetUrn),
                     relationshipType,
-                    buildPageable(page, size, sortOrder, sortBy));
+                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
             return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
 
@@ -345,7 +344,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     UuidUtil.getUuidFromUrn(tenantUrn),
                     sourceType,
                     UuidUtil.getUuidFromUrn(sourceUrn),
-                    buildPageable(page, size, sortOrder, sortBy));
+                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
             return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
 
@@ -386,7 +385,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     UuidUtil.getUuidFromUrn(tenantUrn),
                     targetType,
                     UuidUtil.getUuidFromUrn(targetUrn),
-                    buildPageable(page, size, sortOrder, sortBy));
+                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
             return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
 
@@ -432,23 +431,5 @@ public class RelationshipPersistenceService implements RelationshipDao {
         return entityList.stream()
             .map(o -> conversionService.convert(o, RelationshipResponse.class))
             .collect(Collectors.toList());
-    }
-
-    private Pageable buildPageable(Integer page, Integer size, SortOrder sortOrder, String sortBy) {
-
-        Sort.Direction direction = Sort.DEFAULT_DIRECTION; // TODO default value to service config
-        if (sortOrder != null) {
-            direction = RelationshipPersistenceUtil.getSortDirection(sortOrder);
-        }
-        if (sortBy == null) {
-            sortBy = RelationshipPersistenceUtil.getSortByFieldName("created"); // TODO default value to service config
-        }
-        if (page == null) {
-            page = 0; // TODO default value to service config
-        }
-        if (size == null) {
-            size = 20; // TODO default value to service config
-        }
-        return new PageRequest(page, size, direction, sortBy);
     }
 }
