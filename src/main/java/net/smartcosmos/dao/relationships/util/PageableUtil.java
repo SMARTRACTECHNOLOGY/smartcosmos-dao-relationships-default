@@ -7,7 +7,8 @@ import org.springframework.data.domain.Sort;
 
 public class PageableUtil {
 
-    public static Pageable buildPageable(Integer page, Integer size, SortOrder sortOrder, String sortBy) {
+    public static Pageable buildPageable(Integer page, Integer size, SortOrder sortOrder, String sortBy)
+        throws IllegalArgumentException {
 
         Sort.Direction direction = Sort.DEFAULT_DIRECTION; // TODO default value to service config
         if (sortOrder != null) {
@@ -17,11 +18,12 @@ public class PageableUtil {
             sortBy = RelationshipPersistenceUtil.getSortByFieldName("created"); // TODO default value to service config
         }
         if (page == null) {
-            page = 0; // TODO default value to service config
+            page = 1; // TODO default value to service config
         }
-        else {
-            page--;
+        if (page < 1) {
+            throw new IllegalArgumentException("Page index must not be less than one!");
         }
+        page--;
 
         if (size == null) {
             size = 20; // TODO default value to service config
