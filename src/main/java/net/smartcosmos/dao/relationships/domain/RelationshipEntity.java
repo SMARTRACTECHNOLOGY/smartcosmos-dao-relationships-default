@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +34,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @AllArgsConstructor
 @EntityListeners({ AuditingEntityListener.class })
-@Table(name = "relationship")
+@Table(name = "relationship", indexes = {
+    @Index(columnList = "tenantId, sourceType, sourceId", name = "source_index"),
+    @Index(columnList = "tenantId, targetType, targetId", name = "target_index")
+})
 public class RelationshipEntity implements Serializable {
 
     private static final int UUID_LENGTH = 16;
