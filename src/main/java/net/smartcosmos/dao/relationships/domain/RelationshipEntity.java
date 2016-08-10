@@ -64,12 +64,12 @@ public class RelationshipEntity implements Serializable {
 
     @NotEmpty
     @Size(max = SOURCE_TARGET_TYPE_LENGTH)
-    @Column(name="sourceType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
+    @Column(name = "sourceType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
     private String sourceType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="sourceId", length = UUID_LENGTH, nullable = false, updatable = false)
+    @Column(name = "sourceId", length = UUID_LENGTH, nullable = false, updatable = false)
     private UUID sourceId;
 
     @NotEmpty
@@ -79,12 +79,12 @@ public class RelationshipEntity implements Serializable {
 
     @NotEmpty
     @Size(max = SOURCE_TARGET_TYPE_LENGTH)
-    @Column(name="targetType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
+    @Column(name = "targetType", length = SOURCE_TARGET_TYPE_LENGTH, nullable = false, updatable = false)
     private String targetType;
 
     @NotNull
     @Type(type = "uuid-binary")
-    @Column(name="targetId", length = UUID_LENGTH, nullable = false, updatable = false)
+    @Column(name = "targetId", length = UUID_LENGTH, nullable = false, updatable = false)
     private UUID targetId;
 
     @NotNull

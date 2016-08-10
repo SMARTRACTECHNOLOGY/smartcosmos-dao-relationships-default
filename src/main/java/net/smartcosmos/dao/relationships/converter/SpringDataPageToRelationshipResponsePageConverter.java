@@ -2,8 +2,8 @@ package net.smartcosmos.dao.relationships.converter;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +14,13 @@ import net.smartcosmos.dto.relationships.RelationshipResponse;
 
 @Component
 public class SpringDataPageToRelationshipResponsePageConverter
-    extends ConversionServiceAwareConverter<org.springframework.data.domain.Page<RelationshipEntity>, Page<RelationshipResponse>>  {
+    extends ConversionServiceAwareConverter<org.springframework.data.domain.Page<RelationshipEntity>, Page<RelationshipResponse>> {
 
-    @Inject
+    @Autowired
     private ConversionService conversionService;
 
     protected ConversionService conversionService() {
+
         return conversionService;
     }
 
@@ -33,7 +34,8 @@ public class SpringDataPageToRelationshipResponsePageConverter
             .totalPages(page.getTotalPages())
             .build();
 
-        List<RelationshipResponse> data = page.getContent().stream()
+        List<RelationshipResponse> data = page.getContent()
+            .stream()
             .map(entity -> conversionService.convert(entity, RelationshipResponse.class))
             .collect(Collectors.toList());
 

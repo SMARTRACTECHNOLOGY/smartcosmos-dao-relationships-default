@@ -1,9 +1,10 @@
 package net.smartcosmos.dao.relationships.util;
 
-import net.smartcosmos.dao.relationships.SortOrder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import net.smartcosmos.dao.relationships.SortOrder;
 
 public class PageableUtil {
 

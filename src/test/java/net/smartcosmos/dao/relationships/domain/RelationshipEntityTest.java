@@ -1,20 +1,18 @@
 package net.smartcosmos.dao.relationships.domain;
 
-import net.smartcosmos.util.UuidUtil;
-import org.apache.commons.lang.RandomStringUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
+import java.util.Set;
+import java.util.UUID;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import java.util.Set;
-import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.apache.commons.lang.RandomStringUtils;
+import org.junit.*;
+
+import net.smartcosmos.util.UuidUtil;
+
+import static org.junit.Assert.*;
 
 @SuppressWarnings("Duplicates")
 public class RelationshipEntityTest {
@@ -30,6 +28,7 @@ public class RelationshipEntityTest {
 
     @BeforeClass
     public static void setUp() {
+
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
@@ -70,8 +69,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("sourceType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("sourceType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -91,8 +96,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.NotNull.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("sourceId", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("sourceId",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -112,8 +123,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("relationshipType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("relationshipType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -134,8 +151,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{org.hibernate.validator.constraints.NotEmpty.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("targetType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("targetType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -155,8 +178,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.NotNull.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("targetId", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("targetId",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -176,8 +205,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("sourceType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("sourceType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -197,8 +232,14 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("relationshipType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("relationshipType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 
     @Test
@@ -218,7 +259,13 @@ public class RelationshipEntityTest {
         assertFalse(violationSet.isEmpty());
         assertEquals(1, violationSet.size());
         assertEquals("{javax.validation.constraints.Size.message}",
-            violationSet.iterator().next().getMessageTemplate());
-        assertEquals("targetType", violationSet.iterator().next().getPropertyPath().toString());
+                     violationSet.iterator()
+                         .next()
+                         .getMessageTemplate());
+        assertEquals("targetType",
+                     violationSet.iterator()
+                         .next()
+                         .getPropertyPath()
+                         .toString());
     }
 }

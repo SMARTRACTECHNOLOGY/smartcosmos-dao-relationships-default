@@ -48,13 +48,19 @@ public class SpringDataPageToRelationshipResponsePageConverterTest extends Abstr
         Page<RelationshipResponse> emptyPage = RelationshipPersistenceUtil.emptyPage();
         org.springframework.data.domain.Page<RelationshipEntity> entityPage = new PageImpl<>(content);
         Page<RelationshipResponse> convertedPage = conversionService.convert(entityPage, Page.class);
-        RelationshipResponse response = convertedPage.getData().get(0);
+        RelationshipResponse response = convertedPage.getData()
+            .get(0);
 
-        assertEquals(convertedPage.getData().size(), 1);
-        assertEquals(response.getSource().getType(), relationshipEntity.getSourceType());
-        assertEquals(response.getSource().getUrn(), UuidUtil.getThingUrnFromUuid(relationshipEntity.getSourceId()));
-        assertEquals(response.getTarget().getType(), relationshipEntity.getTargetType());
-        assertEquals(response.getTarget().getUrn(), UuidUtil.getThingUrnFromUuid(relationshipEntity.getTargetId()));
+        assertEquals(convertedPage.getData()
+                         .size(), 1);
+        assertEquals(response.getSource()
+                         .getType(), relationshipEntity.getSourceType());
+        assertEquals(response.getSource()
+                         .getUrn(), UuidUtil.getThingUrnFromUuid(relationshipEntity.getSourceId()));
+        assertEquals(response.getTarget()
+                         .getType(), relationshipEntity.getTargetType());
+        assertEquals(response.getTarget()
+                         .getUrn(), UuidUtil.getThingUrnFromUuid(relationshipEntity.getTargetId()));
         assertEquals(response.getRelationshipType(), relationshipEntity.getRelationshipType());
     }
 

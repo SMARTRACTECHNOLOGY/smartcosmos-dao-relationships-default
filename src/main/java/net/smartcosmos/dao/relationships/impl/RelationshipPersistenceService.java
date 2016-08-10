@@ -40,6 +40,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
     public RelationshipPersistenceService(
         RelationshipRepository RelationshipRepository,
         ConversionService conversionService) {
+
         this.relationshipRepository = RelationshipRepository;
         this.conversionService = conversionService;
     }
@@ -58,10 +59,14 @@ public class RelationshipPersistenceService implements RelationshipDao {
             // If the requested object already exists, return Optional.empty()
             Optional<RelationshipResponse> alreadyExists = findSpecific(
                 tenantUrn,
-                createRelationship.getSource().getType(),
-                createRelationship.getSource().getUrn(),
-                createRelationship.getTarget().getType(),
-                createRelationship.getTarget().getUrn(),
+                createRelationship.getSource()
+                    .getType(),
+                createRelationship.getSource()
+                    .getUrn(),
+                createRelationship.getTarget()
+                    .getType(),
+                createRelationship.getTarget()
+                    .getUrn(),
                 createRelationship.getRelationshipType());
 
             if (alreadyExists.isPresent()) {
@@ -217,7 +222,9 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     UuidUtil.getUuidFromUrn(targetUrn),
                     pageable);
 
-            return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
+            return conversionService.convert(entityPage,
+                                             RelationshipPersistenceUtil.emptyPage()
+                                                 .getClass());
 
         } catch (IllegalArgumentException | ConversionException e) {
             String msg = String.format("findBetweenEntities failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', targetType: '%s', targetUrn: " +
@@ -261,7 +268,9 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     relationshipType,
                     PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
+            return conversionService.convert(entityPage,
+                                             RelationshipPersistenceUtil.emptyPage()
+                                                 .getClass());
 
         } catch (IllegalArgumentException | ConversionException e) {
             String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', relationshipType: '%s'," +
@@ -305,7 +314,9 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     relationshipType,
                     PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
+            return conversionService.convert(entityPage,
+                                             RelationshipPersistenceUtil.emptyPage()
+                                                 .getClass());
 
         } catch (IllegalArgumentException | ConversionException e) {
             String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', relationshipType: '%s'," +
@@ -346,7 +357,9 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     UuidUtil.getUuidFromUrn(sourceUrn),
                     PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
+            return conversionService.convert(entityPage,
+                                             RelationshipPersistenceUtil.emptyPage()
+                                                 .getClass());
 
         } catch (IllegalArgumentException e) {
             String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', " +
@@ -387,7 +400,9 @@ public class RelationshipPersistenceService implements RelationshipDao {
                     UuidUtil.getUuidFromUrn(targetUrn),
                     PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage, RelationshipPersistenceUtil.emptyPage().getClass());
+            return conversionService.convert(entityPage,
+                                             RelationshipPersistenceUtil.emptyPage()
+                                                 .getClass());
 
         } catch (IllegalArgumentException | ConversionException e) {
             String msg = String.format("findByTypeForSource failed, tenant: '%s', targetType: '%s', targetUrn: '%s', cause: '%s'", tenantUrn,
@@ -407,6 +422,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
      * @throws TransactionException         if the transaction fails because of something else
      */
     private RelationshipEntity persist(RelationshipEntity relationshipEntity) throws ConstraintViolationException, TransactionException {
+
         try {
             return relationshipRepository.save(relationshipEntity);
         } catch (TransactionException e) {
@@ -428,6 +444,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
      * @return
      */
     private List<RelationshipResponse> convertList(List<RelationshipEntity> entityList) {
+
         return entityList.stream()
             .map(o -> conversionService.convert(o, RelationshipResponse.class))
             .collect(Collectors.toList());

@@ -65,17 +65,20 @@ public class RelationshipPersistenceServiceTest {
             .thenReturn(new SmartCosmosUser(accountUrn, "urn:userUrn", "username",
                                             "password", Arrays.asList(new SimpleGrantedAuthority("USER"))));
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication())
+            .thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
     }
 
     @After
     public void tearDown() throws Exception {
+
         relationshipRepository.deleteAll();
     }
 
     @Test
     public void testCreateSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
@@ -84,8 +87,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -94,15 +103,30 @@ public class RelationshipPersistenceServiceTest {
 
         assertNotEquals(Optional.empty(), relationshipResponse);
 
-        assertEquals(TEST_SOURCE_TYPE, relationshipResponse.get().getSource().getType()); //.getEntityReferenceType());
-        assertEquals(TEST_SOURCE_URN, relationshipResponse.get().getSource().getUrn());
-        assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, relationshipResponse.get().getTarget().getType());
-        assertEquals(TEST_TARGET_URN, relationshipResponse.get().getTarget().getUrn());
+        assertEquals(TEST_SOURCE_TYPE,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getType()); //.getEntityReferenceType());
+        assertEquals(TEST_SOURCE_URN,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE,
+                     relationshipResponse.get()
+                         .getRelationshipType());
+        assertEquals(TEST_TARGET_TYPE,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getUrn());
     }
 
     @Test
     public void testCreateReturnsEmptyOptionalOnSecondCreateOfSameRelationship() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
@@ -111,8 +135,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -121,11 +151,25 @@ public class RelationshipPersistenceServiceTest {
 
         assertNotEquals(Optional.empty(), relationshipResponse);
 
-        assertEquals(TEST_SOURCE_TYPE, relationshipResponse.get().getSource().getType()); //.getEntityReferenceType());
-        assertEquals(TEST_SOURCE_URN, relationshipResponse.get().getSource().getUrn());
-        assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, relationshipResponse.get().getTarget().getType());
-        assertEquals(TEST_TARGET_URN, relationshipResponse.get().getTarget().getUrn());
+        assertEquals(TEST_SOURCE_TYPE,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getType()); //.getEntityReferenceType());
+        assertEquals(TEST_SOURCE_URN,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE,
+                     relationshipResponse.get()
+                         .getRelationshipType());
+        assertEquals(TEST_TARGET_TYPE,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getUrn());
 
         Optional<RelationshipResponse> relationshipResponse2 = relationshipPersistenceService
             .create(accountUrn, relationshipCreate);
@@ -136,6 +180,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateThrowsIllegalArgumentExceptionOnBadSourceUrn() {
+
         final String TEST_SOURCE_URN = "nonConformingUrn:" + UuidUtil.getNewUuidAsString();
         ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
@@ -144,8 +189,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -155,6 +206,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateThrowsIllegalArgumentExceptionOnBadTargetUrn() {
+
         final String TEST_SOURCE_URN = "nonConformingUrn:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = null;
         final String TEST_SOURCE_TYPE = "Thing";
@@ -162,8 +214,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -173,6 +231,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void testCreateThrowsConstraintViolationExceptionOnBadSourceType() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = null;
@@ -180,8 +239,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -191,6 +256,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void testCreateThrowsConstraintViolationExceptionOnBadTargetType() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -198,8 +264,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Created by";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -209,6 +281,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void testCreateThrowsConstraintViolationExceptionOnBadRelationshipType() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -216,8 +289,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = null;
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -227,6 +306,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindByUrnSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -234,21 +314,43 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found by URN";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).get().getUrn();
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate)
+            .get()
+            .getUrn();
 
         Optional<RelationshipResponse> relationshipResponse = relationshipPersistenceService.findByUrn(accountUrn, urn);
 
         assertTrue(relationshipResponse.isPresent());
-        assertEquals(TEST_SOURCE_TYPE, relationshipResponse.get().getSource().getType());
-        assertEquals(TEST_SOURCE_URN, relationshipResponse.get().getSource().getUrn());
-        assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, relationshipResponse.get().getTarget().getType());
-        assertEquals(TEST_TARGET_URN, relationshipResponse.get().getTarget().getUrn());
+        assertEquals(TEST_SOURCE_TYPE,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE,
+                     relationshipResponse.get()
+                         .getRelationshipType());
+        assertEquals(TEST_TARGET_TYPE,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -269,6 +371,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindSpecificSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -276,8 +379,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found specific";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -287,15 +396,30 @@ public class RelationshipPersistenceServiceTest {
             .findSpecific(accountUrn, TEST_SOURCE_TYPE, TEST_SOURCE_URN, TEST_TARGET_TYPE, TEST_TARGET_URN, TEST_RELATIONSHIP_TYPE);
 
         assertTrue(relationshipResponse.isPresent());
-        assertEquals(TEST_SOURCE_TYPE, relationshipResponse.get().getSource().getType());
-        assertEquals(TEST_SOURCE_URN, relationshipResponse.get().getSource().getUrn());
-        assertEquals(TEST_RELATIONSHIP_TYPE, relationshipResponse.get().getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, relationshipResponse.get().getTarget().getType());
-        assertEquals(TEST_TARGET_URN, relationshipResponse.get().getTarget().getUrn());
+        assertEquals(TEST_SOURCE_TYPE,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getUrn());
+        assertEquals(TEST_RELATIONSHIP_TYPE,
+                     relationshipResponse.get()
+                         .getRelationshipType());
+        assertEquals(TEST_TARGET_TYPE,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindSpecificThrowsIllegalArgumentExceptionOnBadSourceUrn() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -303,8 +427,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found specific";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -317,6 +447,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindSpecificReturnsEmptyOptionalOnBadSourceType() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -324,8 +455,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found specific";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -338,6 +475,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindSpecificReturnsEmptyOptionalOnBadRelationshipType() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -345,8 +483,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Found specific";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -359,6 +503,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testDeleteSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -366,21 +511,32 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Delete by URN";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).get().getUrn();
-        assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate)
+            .get()
+            .getUrn();
+        assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn)
+                       .isPresent());
         List<RelationshipResponse> returnList = relationshipPersistenceService.delete(accountUrn, urn);
 
         assertEquals(returnList.size(), 1);
-        assertFalse(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
+        assertFalse(relationshipPersistenceService.findByUrn(accountUrn, urn)
+                        .isPresent());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDeleteThrowsIllegalArgumentExceptionOnMalformedUrn() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -388,13 +544,22 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Delete by URN";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
-        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate).get().getUrn();
-        assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn).isPresent());
+        String urn = relationshipPersistenceService.create(accountUrn, relationshipCreate)
+            .get()
+            .getUrn();
+        assertTrue(relationshipPersistenceService.findByUrn(accountUrn, urn)
+                       .isPresent());
         List<RelationshipResponse> returnList = relationshipPersistenceService.delete(accountUrn, "malformedUrn");
     }
 
@@ -408,6 +573,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindBySourceTypeSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -415,8 +581,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -425,17 +597,29 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findByTypeForSource(accountUrn, TEST_SOURCE_TYPE, TEST_SOURCE_URN,
                                                                                                      TEST_RELATIONSHIP_TYPE, null, null, null, null);
 
-        assertEquals(1, responsePage.getPage().getSize());
-        RelationshipResponse response = responsePage.getData().get(0);
-        assertEquals(TEST_SOURCE_TYPE, response.getSource().getType());
-        assertEquals(TEST_SOURCE_URN, response.getSource().getUrn());
+        assertEquals(1,
+                     responsePage.getPage()
+                         .getSize());
+        RelationshipResponse response = responsePage.getData()
+            .get(0);
+        assertEquals(TEST_SOURCE_TYPE,
+                     response.getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     response.getSource()
+                         .getUrn());
         assertEquals(TEST_RELATIONSHIP_TYPE, response.getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, response.getTarget().getType());
-        assertEquals(TEST_TARGET_URN, response.getTarget().getUrn());
+        assertEquals(TEST_TARGET_TYPE,
+                     response.getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     response.getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindBySourceTypeThrowsIllegalArguementExceptionOnMalformedUrn() {
+
         final String TEST_SOURCE_TYPE = "Thing";
         final String TEST_RELATIONSHIP_TYPE = "RelationshipType";
 
@@ -445,16 +629,20 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindBySourceTypeReturnsEmptyPageOnNotFound() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
 
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findByTypeForSource(accountUrn, TEST_SOURCE_TYPE, TEST_SOURCE_URN,
                                                                                                      "someOtherType", null, null, null, null);
-        assertEquals(0, responsePage.getPage().getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getSize());
     }
 
     @Test
     public void testFindByTargetTypeSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -462,8 +650,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -472,17 +666,29 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findByTypeForTarget(accountUrn, TEST_TARGET_TYPE, TEST_TARGET_URN,
                                                                                                      TEST_RELATIONSHIP_TYPE, null, null, null, null);
 
-        assertEquals(1, responsePage.getPage().getSize());
-        RelationshipResponse response = responsePage.getData().get(0);
-        assertEquals(TEST_SOURCE_TYPE, response.getSource().getType());
-        assertEquals(TEST_SOURCE_URN, response.getSource().getUrn());
+        assertEquals(1,
+                     responsePage.getPage()
+                         .getSize());
+        RelationshipResponse response = responsePage.getData()
+            .get(0);
+        assertEquals(TEST_SOURCE_TYPE,
+                     response.getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     response.getSource()
+                         .getUrn());
         assertEquals(TEST_RELATIONSHIP_TYPE, response.getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, response.getTarget().getType());
-        assertEquals(TEST_TARGET_URN, response.getTarget().getUrn());
+        assertEquals(TEST_TARGET_TYPE,
+                     response.getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     response.getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindByTargetTypeThrowsIllegalArguementExceptionOnMalformedUrn() {
+
         final String TEST_TARGET_TYPE = "Thing";
         final String TEST_RELATIONSHIP_TYPE = "RelationshipType";
 
@@ -492,16 +698,20 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindByTargetTypeReturnsEmptyPageOnNotFound() {
+
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_TYPE = "Thing";
 
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findByTypeForTarget(accountUrn, TEST_TARGET_TYPE, TEST_TARGET_URN,
                                                                                                      "someOtherType", null, null, null, null);
-        assertEquals(0, responsePage.getPage().getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getSize());
     }
 
     @Test
     public void testFindAllForSourceSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -509,8 +719,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -519,17 +735,29 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findAllForSource(accountUrn, TEST_SOURCE_TYPE, TEST_SOURCE_URN,
                                                                                                   null, null, null, null);
 
-        assertEquals(1, responsePage.getPage().getSize());
-        RelationshipResponse response = responsePage.getData().get(0);
-        assertEquals(TEST_SOURCE_TYPE, response.getSource().getType());
-        assertEquals(TEST_SOURCE_URN, response.getSource().getUrn());
+        assertEquals(1,
+                     responsePage.getPage()
+                         .getSize());
+        RelationshipResponse response = responsePage.getData()
+            .get(0);
+        assertEquals(TEST_SOURCE_TYPE,
+                     response.getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     response.getSource()
+                         .getUrn());
         assertEquals(TEST_RELATIONSHIP_TYPE, response.getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, response.getTarget().getType());
-        assertEquals(TEST_TARGET_URN, response.getTarget().getUrn());
+        assertEquals(TEST_TARGET_TYPE,
+                     response.getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     response.getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindAllForSourceThrowsIllegalArgumentExceptionOnMalformedUrn() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -537,8 +765,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -551,6 +785,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindAllForSourceReturnsEmptyPageIfNotFound() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -558,8 +793,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -568,11 +809,14 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findAllForSource(accountUrn, "someType", TEST_SOURCE_URN,
                                                                                                   null, null, null, null);
 
-        assertEquals(0, responsePage.getPage().getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getSize());
     }
 
     @Test
     public void testFindAllForTargetSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -580,8 +824,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -590,17 +840,29 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findAllForTarget(accountUrn, TEST_TARGET_TYPE, TEST_TARGET_URN,
                                                                                                   null, null, null, null);
 
-        assertEquals(1, responsePage.getPage().getSize());
-        RelationshipResponse response = responsePage.getData().get(0);
-        assertEquals(TEST_SOURCE_TYPE, response.getSource().getType());
-        assertEquals(TEST_SOURCE_URN, response.getSource().getUrn());
+        assertEquals(1,
+                     responsePage.getPage()
+                         .getSize());
+        RelationshipResponse response = responsePage.getData()
+            .get(0);
+        assertEquals(TEST_SOURCE_TYPE,
+                     response.getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     response.getSource()
+                         .getUrn());
         assertEquals(TEST_RELATIONSHIP_TYPE, response.getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, response.getTarget().getType());
-        assertEquals(TEST_TARGET_URN, response.getTarget().getUrn());
+        assertEquals(TEST_TARGET_TYPE,
+                     response.getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     response.getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindAllForTargetThrowsIllegalArgumentExceptionOnMalformedUrn() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -608,8 +870,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -622,6 +890,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindAllForTargetReturnsEmptyPageIfNotFound() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -629,8 +898,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -639,11 +914,14 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findAllForTarget(accountUrn, "someType", TEST_TARGET_URN,
                                                                                                   null, null, null, null);
 
-        assertEquals(0, responsePage.getPage().getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getSize());
     }
 
     @Test
     public void testFindBetweenEntitiesSuccess() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -651,8 +929,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -662,17 +946,29 @@ public class RelationshipPersistenceServiceTest {
                                                                                                      TEST_TARGET_TYPE, TEST_TARGET_URN, null, null,
                                                                                                      null, null);
 
-        assertEquals(1, responsePage.getPage().getSize());
-        RelationshipResponse response = responsePage.getData().get(0);
-        assertEquals(TEST_SOURCE_TYPE, response.getSource().getType());
-        assertEquals(TEST_SOURCE_URN, response.getSource().getUrn());
+        assertEquals(1,
+                     responsePage.getPage()
+                         .getSize());
+        RelationshipResponse response = responsePage.getData()
+            .get(0);
+        assertEquals(TEST_SOURCE_TYPE,
+                     response.getSource()
+                         .getType());
+        assertEquals(TEST_SOURCE_URN,
+                     response.getSource()
+                         .getUrn());
         assertEquals(TEST_RELATIONSHIP_TYPE, response.getRelationshipType());
-        assertEquals(TEST_TARGET_TYPE, response.getTarget().getType());
-        assertEquals(TEST_TARGET_URN, response.getTarget().getUrn());
+        assertEquals(TEST_TARGET_TYPE,
+                     response.getTarget()
+                         .getType());
+        assertEquals(TEST_TARGET_URN,
+                     response.getTarget()
+                         .getUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testFindBetweenEntitiesThrowsIllegalArgumentExceptionOnMalformedUrn() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -680,8 +976,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -694,6 +996,7 @@ public class RelationshipPersistenceServiceTest {
 
     @Test
     public void testFindBetweenEntitiesReturnsEmptyPageOnNotFound() {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -701,8 +1004,14 @@ public class RelationshipPersistenceServiceTest {
         final String TEST_RELATIONSHIP_TYPE = "Type";
 
         RelationshipCreate relationshipCreate = RelationshipCreate.builder()
-            .source(RelationshipReference.builder().type(TEST_SOURCE_TYPE).urn(TEST_SOURCE_URN).build())
-            .target(RelationshipReference.builder().type(TEST_TARGET_TYPE).urn(TEST_TARGET_URN).build())
+            .source(RelationshipReference.builder()
+                        .type(TEST_SOURCE_TYPE)
+                        .urn(TEST_SOURCE_URN)
+                        .build())
+            .target(RelationshipReference.builder()
+                        .type(TEST_TARGET_TYPE)
+                        .urn(TEST_TARGET_URN)
+                        .build())
             .relationshipType(TEST_RELATIONSHIP_TYPE)
             .build();
 
@@ -710,7 +1019,9 @@ public class RelationshipPersistenceServiceTest {
         Page<RelationshipResponse> responsePage = relationshipPersistenceService.findBetweenEntities(accountUrn, "someType", TEST_SOURCE_URN,
                                                                                                      TEST_TARGET_TYPE, TEST_TARGET_URN, null, null,
                                                                                                      null, null);
-        assertEquals(0, responsePage.getPage().getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getSize());
     }
 
 }
