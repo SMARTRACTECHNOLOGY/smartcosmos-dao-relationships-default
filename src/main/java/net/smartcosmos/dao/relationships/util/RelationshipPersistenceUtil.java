@@ -3,14 +3,12 @@ package net.smartcosmos.dao.relationships.util;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Sort;
 
-import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.SortOrder;
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dto.relationships.Page;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
 
 public class RelationshipPersistenceUtil {
-
 
     /**
      * Transforms a field name for a sorted query to a valid case-sensitive field name that exists in the entity class.
@@ -85,6 +83,7 @@ public class RelationshipPersistenceUtil {
      * @return the case-corrected field name if it exists, {@code id} otherwise
      */
     public static String getSortByFieldName(String sortBy) {
+
         sortBy = RelationshipPersistenceUtil.normalizeFieldName(sortBy);
         if (StringUtils.isBlank(sortBy) || !RelationshipPersistenceUtil.isRelationshipEntityField(sortBy)) {
             sortBy = "id";
@@ -99,10 +98,15 @@ public class RelationshipPersistenceUtil {
      * @return the Spring sort direction
      */
     public static Sort.Direction getSortDirection(SortOrder sortOrder) {
+
         Sort.Direction direction = Sort.DEFAULT_DIRECTION;
         switch (sortOrder) {
-            case ASC: direction = Sort.Direction.ASC; break;
-            case DESC: direction = Sort.Direction.DESC; break;
+            case ASC:
+                direction = Sort.Direction.ASC;
+                break;
+            case DESC:
+                direction = Sort.Direction.DESC;
+                break;
         }
         return direction;
     }

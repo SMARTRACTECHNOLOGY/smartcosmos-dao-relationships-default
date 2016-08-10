@@ -19,10 +19,12 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
 
     @Before
     public void before() throws Exception {
+
     }
 
     @After
     public void after() throws Exception {
+
     }
 
     /**
@@ -30,6 +32,7 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
      */
     @Test
     public void testConvert() throws Exception {
+
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -50,10 +53,14 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
         RelationshipEntityToRelationshipResponseConverter converter = new RelationshipEntityToRelationshipResponseConverter();
         RelationshipResponse relationshipResponse = converter.convert(relationshipEntity);
 
-        assertEquals(relationshipResponse.getSource().getType(), relationshipEntity.getSourceType());
-        assertEquals(UuidUtil.getUuidFromUrn(relationshipResponse.getSource().getUrn()), relationshipEntity.getSourceId());
-        assertEquals(relationshipResponse.getTarget().getType(), relationshipEntity.getTargetType());
-        assertEquals(UuidUtil.getUuidFromUrn(relationshipResponse.getTarget().getUrn()), relationshipEntity.getTargetId());
+        assertEquals(relationshipResponse.getSource()
+                         .getType(), relationshipEntity.getSourceType());
+        assertEquals(UuidUtil.getUuidFromUrn(relationshipResponse.getSource()
+                                                 .getUrn()), relationshipEntity.getSourceId());
+        assertEquals(relationshipResponse.getTarget()
+                         .getType(), relationshipEntity.getTargetType());
+        assertEquals(UuidUtil.getUuidFromUrn(relationshipResponse.getTarget()
+                                                 .getUrn()), relationshipEntity.getTargetId());
         assertEquals(relationshipResponse.getRelationshipType(), relationshipEntity.getRelationshipType());
     }
 }

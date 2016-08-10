@@ -1,23 +1,25 @@
 package net.smartcosmos.dao.relationships.converter;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 
 abstract class ConversionServiceAwareConverter<S, T> implements Converter<S, T> {
 
-    @Inject
+    @Autowired
     private ConversionService conversionService;
 
     protected ConversionService conversionService() {
+
         return conversionService;
     }
 
     @PostConstruct
     private void register() {
+
         if (conversionService instanceof ConverterRegistry) {
             ((ConverterRegistry) conversionService).addConverter(this);
         } else {

@@ -1,6 +1,6 @@
 package net.smartcosmos.dao.relationships.converter;
 
-import org.junit.Before;
+import org.junit.*;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.test.util.ReflectionTestUtils;
 
