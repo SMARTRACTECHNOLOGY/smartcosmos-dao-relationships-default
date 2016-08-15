@@ -37,7 +37,6 @@ import static org.junit.Assert.*;
  * actually called. It's a minor setback with Spring, one that just requires some diligent
  * testing.accountId
  */
-@SuppressWarnings("Duplicates")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {
     RelationshipPersistenceTestApplication.class,
@@ -80,7 +79,6 @@ public class RelationshipPersistenceServiceTest {
     public void testCreateSuccess() {
 
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
-        ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
         final String TEST_TARGET_TYPE = "Thing";
@@ -128,7 +126,6 @@ public class RelationshipPersistenceServiceTest {
     public void testCreateReturnsEmptyOptionalOnSecondCreateOfSameRelationship() {
 
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
-        ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
         final String TEST_TARGET_TYPE = "Thing";
@@ -182,7 +179,6 @@ public class RelationshipPersistenceServiceTest {
     public void testCreateThrowsIllegalArgumentExceptionOnBadSourceUrn() {
 
         final String TEST_SOURCE_URN = "nonConformingUrn:" + UuidUtil.getNewUuidAsString();
-        ;
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
         final String TEST_TARGET_TYPE = "Thing";
@@ -638,6 +634,15 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(0,
                      responsePage.getPage()
                          .getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getNumber());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalElements());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalPages());
     }
 
     @Test
@@ -707,6 +712,15 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(0,
                      responsePage.getPage()
                          .getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getNumber());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalElements());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalPages());
     }
 
     @Test
@@ -812,6 +826,15 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(0,
                      responsePage.getPage()
                          .getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getNumber());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalElements());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalPages());
     }
 
     @Test
@@ -917,6 +940,15 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(0,
                      responsePage.getPage()
                          .getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getNumber());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalElements());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalPages());
     }
 
     @Test
@@ -1022,6 +1054,15 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(0,
                      responsePage.getPage()
                          .getSize());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getNumber());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalElements());
+        assertEquals(0,
+                     responsePage.getPage()
+                         .getTotalPages());
     }
 
 }
