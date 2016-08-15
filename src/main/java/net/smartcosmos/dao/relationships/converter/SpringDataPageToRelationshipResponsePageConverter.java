@@ -28,10 +28,10 @@ public class SpringDataPageToRelationshipResponsePageConverter
     public Page<RelationshipResponse> convert(org.springframework.data.domain.Page<RelationshipEntity> page) {
 
         PageInformation pageInformation = PageInformation.builder()
-            .number(page.getNumber() + 1)
+            .number((page.getTotalElements() > 0 ? page.getNumber() + 1 : 0))
             .totalElements(page.getTotalElements())
             .size(page.getNumberOfElements())
-            .totalPages(page.getTotalPages())
+            .totalPages((page.getNumberOfElements() > 0 ? page.getTotalPages() : 0))
             .build();
 
         List<RelationshipResponse> data = page.getContent()

@@ -1,6 +1,7 @@
 package net.smartcosmos.dao.relationships.converter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.*;
@@ -10,6 +11,7 @@ import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
 import net.smartcosmos.dao.relationships.util.RelationshipPersistenceUtil;
 import net.smartcosmos.dao.relationships.util.UuidUtil;
 import net.smartcosmos.dto.relationships.Page;
+import net.smartcosmos.dto.relationships.PageInformation;
 import net.smartcosmos.dto.relationships.RelationshipResponse;
 
 import static org.junit.Assert.*;
@@ -45,7 +47,6 @@ public class SpringDataPageToRelationshipResponsePageConverterTest extends Abstr
         List<RelationshipEntity> content = new ArrayList<>();
         content.add(relationshipEntity);
 
-        Page<RelationshipResponse> emptyPage = RelationshipPersistenceUtil.emptyPage();
         org.springframework.data.domain.Page<RelationshipEntity> entityPage = new PageImpl<>(content);
         Page<RelationshipResponse> convertedPage = conversionService.convert(entityPage, Page.class);
         RelationshipResponse response = convertedPage.getData()
@@ -62,6 +63,29 @@ public class SpringDataPageToRelationshipResponsePageConverterTest extends Abstr
         assertEquals(response.getTarget()
                          .getUrn(), UuidUtil.getThingUrnFromUuid(relationshipEntity.getTargetId()));
         assertEquals(response.getRelationshipType(), relationshipEntity.getRelationshipType());
+    }
+
+    @Test
+    public void thatEmptyPageConversionSucceeds() {
+
+        List<RelationshipEntity> content = new ArrayList<>();
+        org.springframework.data.domain.Page<RelationshipEntity> emptyEntityPage = new PageImpl<>(content);
+
+        Page<RelationshipResponse> convertedPage = conversionService.convert(emptyEntityPage, Page.class);
+
+        Collection<RelationshipResponse> data = convertedPage.getData();
+
+        assertTrue(data.isEmpty());
+
+        PageInformation pageInformation = convertedPage.getPage();
+
+        assertEquals(0, pageInformation.getSize());
+        assertEquals(0, pageInformation.getNumber());
+        assertEquals(0, pageInformation.getTotalPages());
+        assertEquals(0, pageInformation.getTotalElements());
+
+        Page<RelationshipResponse> emptyPage = RelationshipPersistenceUtil.emptyPage();
+        assertEquals(emptyPage, convertedPage);
     }
 
 }
