@@ -1,4 +1,4 @@
-= SMART COSMOS Objects Release Notes
+= SMART COSMOS DAO Relationships for JPA Release Notes
 
 == UNRELEASED
 
