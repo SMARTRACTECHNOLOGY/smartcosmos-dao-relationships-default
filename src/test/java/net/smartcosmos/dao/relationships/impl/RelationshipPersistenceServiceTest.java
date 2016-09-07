@@ -120,6 +120,17 @@ public class RelationshipPersistenceServiceTest {
                      relationshipResponse.get()
                          .getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getTenantUrn());
     }
 
     @Test
@@ -167,6 +178,17 @@ public class RelationshipPersistenceServiceTest {
                      relationshipResponse.get()
                          .getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getTenantUrn());
 
         Optional<RelationshipResponse> relationshipResponse2 = relationshipPersistenceService
             .create(accountUrn, relationshipCreate);
@@ -347,6 +369,17 @@ public class RelationshipPersistenceServiceTest {
                      relationshipResponse.get()
                          .getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -411,6 +444,17 @@ public class RelationshipPersistenceServiceTest {
                      relationshipResponse.get()
                          .getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     relationshipResponse.get()
+                         .getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -611,6 +655,14 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(TEST_TARGET_URN,
                      response.getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     response.getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -767,6 +819,14 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(TEST_TARGET_URN,
                      response.getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     response.getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -881,6 +941,14 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(TEST_TARGET_URN,
                      response.getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     response.getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -996,6 +1064,14 @@ public class RelationshipPersistenceServiceTest {
         assertEquals(TEST_TARGET_URN,
                      response.getTarget()
                          .getUrn());
+        assertEquals(accountUrn,
+                     response.getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getSource()
+                         .getTenantUrn());
+        assertEquals(accountUrn,
+                     response.getTarget()
+                         .getTenantUrn());
     }
 
     @Test(expected = IllegalArgumentException.class)
