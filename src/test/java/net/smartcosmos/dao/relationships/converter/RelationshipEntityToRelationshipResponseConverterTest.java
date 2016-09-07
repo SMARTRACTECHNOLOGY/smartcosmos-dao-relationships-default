@@ -1,5 +1,7 @@
 package net.smartcosmos.dao.relationships.converter;
 
+import java.util.UUID;
+
 import org.junit.*;
 
 import net.smartcosmos.dao.relationships.domain.RelationshipEntity;
@@ -33,6 +35,8 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
     @Test
     public void testConvert() throws Exception {
 
+        final UUID TEST_TENANT_ID = UuidUtil.getNewUuid();
+        final String TEST_TENANT_URN = UuidUtil.getTenantUrnFromUuid(TEST_TENANT_ID);
         final String TEST_SOURCE_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_TARGET_URN = "urn:thing:uuid:" + UuidUtil.getNewUuidAsString();
         final String TEST_SOURCE_TYPE = "Thing";
@@ -42,7 +46,7 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
         RelationshipEntity relationshipEntity = RelationshipEntity
             .builder()
             .id(UuidUtil.getNewUuid())
-            .tenantId(UuidUtil.getNewUuid())
+            .tenantId(TEST_TENANT_ID)
             .sourceId(UuidUtil.getUuidFromUrn(TEST_SOURCE_URN))
             .sourceType(TEST_SOURCE_TYPE)
             .targetId(UuidUtil.getUuidFromUrn(TEST_TARGET_URN))
@@ -62,5 +66,9 @@ public class RelationshipEntityToRelationshipResponseConverterTest {
         assertEquals(UuidUtil.getUuidFromUrn(relationshipResponse.getTarget()
                                                  .getUrn()), relationshipEntity.getTargetId());
         assertEquals(relationshipResponse.getRelationshipType(), relationshipEntity.getRelationshipType());
+
+        assertEquals(TEST_TENANT_URN, relationshipResponse.getTenantUrn());
+        assertEquals(TEST_TENANT_URN, relationshipResponse.getSource().getTenantUrn());
+        assertEquals(TEST_TENANT_URN, relationshipResponse.getTarget().getTenantUrn());
     }
 }

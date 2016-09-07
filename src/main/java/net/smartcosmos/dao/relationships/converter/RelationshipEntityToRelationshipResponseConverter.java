@@ -20,11 +20,13 @@ public class RelationshipEntityToRelationshipResponseConverter
         RelationshipReference source = RelationshipReference.builder()
             .urn(UuidUtil.getThingUrnFromUuid(entity.getSourceId()))
             .type(entity.getSourceType())
+            .tenantUrn(UuidUtil.getTenantUrnFromUuid(entity.getTenantId()))
             .build();
 
         RelationshipReference target = RelationshipReference.builder()
             .urn(UuidUtil.getThingUrnFromUuid(entity.getTargetId()))
             .type(entity.getTargetType())
+            .tenantUrn(UuidUtil.getTenantUrnFromUuid(entity.getTenantId()))
             .build();
 
         return RelationshipResponse.builder()
