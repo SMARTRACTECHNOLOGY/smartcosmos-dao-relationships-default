@@ -2,7 +2,6 @@ package net.smartcosmos.dao.relationships.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
 
     private final RelationshipRepository relationshipRepository;
     private final ConversionService conversionService;
-    private final SearchSpecifications<RelationshipEntity> searchSpecifications = new SearchSpecifications<RelationshipEntity>();
+    private final SearchSpecifications<RelationshipEntity> searchSpecifications = new SearchSpecifications<>();
 
     @Autowired
     public RelationshipPersistenceService(
@@ -55,36 +53,28 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public Optional<RelationshipResponse> create(String tenantUrn, RelationshipCreate createRelationship) {
 
-        try {
-            // If the requested object already exists, return Optional.empty()
-            Optional<RelationshipResponse> alreadyExists = findSpecific(
-                tenantUrn,
-                createRelationship.getSource()
-                    .getType(),
-                createRelationship.getSource()
-                    .getUrn(),
-                createRelationship.getTarget()
-                    .getType(),
-                createRelationship.getTarget()
-                    .getUrn(),
-                createRelationship.getRelationshipType());
+        // If the requested object already exists, return Optional.empty()
+        Optional<RelationshipResponse> alreadyExists = findSpecific(
+            tenantUrn,
+            createRelationship.getSource()
+                .getType(),
+            createRelationship.getSource()
+                .getUrn(),
+            createRelationship.getTarget()
+                .getType(),
+            createRelationship.getTarget()
+                .getUrn(),
+            createRelationship.getRelationshipType());
 
-            if (alreadyExists.isPresent()) {
-                return Optional.empty();
-            }
-
-            UUID tenantId = UuidUtil.getUuidFromUrn(tenantUrn);
-            RelationshipEntity entity = conversionService.convert(createRelationship, RelationshipEntity.class);
-            entity.setTenantId(tenantId);
-            entity = persist(entity);
-            return Optional.ofNullable(conversionService.convert(entity, RelationshipResponse.class));
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("create failed, tenant: '%s', cause: %s", tenantUrn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
+        if (alreadyExists.isPresent()) {
+            return Optional.empty();
         }
+
+        RelationshipEntity entity = conversionService.convert(createRelationship, RelationshipEntity.class);
+        entity.setTenantId(UuidUtil.getUuidFromUrn(tenantUrn));
+        entity = persist(entity);
+
+        return Optional.ofNullable(conversionService.convert(entity, RelationshipResponse.class));
     }
 
     /**
@@ -97,17 +87,7 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public List<RelationshipResponse> delete(String tenantUrn, String urn) {
 
-        try {
-            UUID tenantId = UuidUtil.getUuidFromUrn(tenantUrn);
-            UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            return convertList(relationshipRepository.deleteByTenantIdAndId(tenantId, uuid));
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findByUrn failed, tenant: '%s', urn: '%s', cause: %s", tenantUrn, urn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return convertList(relationshipRepository.deleteByTenantIdAndId(UuidUtil.getUuidFromUrn(tenantUrn), UuidUtil.getUuidFromUrn(urn)));
     }
 
     /**
@@ -120,22 +100,14 @@ public class RelationshipPersistenceService implements RelationshipDao {
     @Override
     public Optional<RelationshipResponse> findByUrn(String tenantUrn, String urn) {
 
-        try {
-            UUID tenantId = UuidUtil.getUuidFromUrn(tenantUrn);
-            UUID uuid = UuidUtil.getUuidFromUrn(urn);
-            Optional<RelationshipEntity> entity = relationshipRepository.findByTenantIdAndId(tenantId, uuid);
-            if (entity.isPresent()) {
-                final RelationshipResponse response = conversionService.convert(entity.get(), RelationshipResponse.class);
-                return Optional.ofNullable(response);
-            }
-            return Optional.empty();
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findByUrn failed, tenant: '%s', urn: '%s', cause: %s", tenantUrn, urn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
+        Optional<RelationshipEntity> entity = relationshipRepository.findByTenantIdAndId(UuidUtil.getUuidFromUrn(tenantUrn),
+                                                                                         UuidUtil.getUuidFromUrn(urn));
+        if (entity.isPresent()) {
+            final RelationshipResponse response = conversionService.convert(entity.get(), RelationshipResponse.class);
+            return Optional.ofNullable(response);
         }
+
+        return Optional.empty();
     }
 
     /**
@@ -158,32 +130,21 @@ public class RelationshipPersistenceService implements RelationshipDao {
         String targetUrn,
         String relationshipType) {
 
-        try {
-            UUID accountId = UuidUtil.getUuidFromUrn(tenantUrn);
-            Optional<RelationshipEntity> entity = relationshipRepository
-                .findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
-                    accountId,
-                    sourceType,
-                    UuidUtil.getUuidFromUrn(sourceUrn),
-                    relationshipType,
-                    targetType,
-                    UuidUtil.getUuidFromUrn(targetUrn));
+        Optional<RelationshipEntity> entity = relationshipRepository
+            .findByTenantIdAndSourceTypeAndSourceIdAndRelationshipTypeAndTargetTypeAndTargetId(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                sourceType,
+                UuidUtil.getUuidFromUrn(sourceUrn),
+                relationshipType,
+                targetType,
+                UuidUtil.getUuidFromUrn(targetUrn));
 
-            if (entity.isPresent()) {
-                final RelationshipResponse response = conversionService.convert(entity.get(), RelationshipResponse.class);
-                return Optional.ofNullable(response);
-            }
-            return Optional.empty();
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findSpecific failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', targetType: '%s', targetUrn: '%s', " +
-                                       "relationshipType: '%s', cause: %s", tenantUrn, sourceType, sourceUrn, targetType, targetUrn, relationshipType,
-                                       e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
+        if (entity.isPresent()) {
+            final RelationshipResponse response = conversionService.convert(entity.get(), RelationshipResponse.class);
+            return Optional.ofNullable(response);
         }
 
+        return Optional.empty();
     }
 
     /**
@@ -211,28 +172,19 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        try {
-            Pageable pageable = PageableUtil.buildPageable(page, size, sortOrder, sortBy);
-            org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-                relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
-                    UuidUtil.getUuidFromUrn(tenantUrn),
-                    sourceType,
-                    UuidUtil.getUuidFromUrn(sourceUrn),
-                    targetType,
-                    UuidUtil.getUuidFromUrn(targetUrn),
-                    pageable);
+        Pageable pageable = PageableUtil.buildPageable(page, size, sortOrder, sortBy);
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
+            relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndTargetTypeAndTargetId(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                sourceType,
+                UuidUtil.getUuidFromUrn(sourceUrn),
+                targetType,
+                UuidUtil.getUuidFromUrn(targetUrn),
+                pageable);
 
-            return conversionService.convert(entityPage,
-                                             RelationshipPersistenceUtil.emptyPage()
-                                                 .getClass());
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findBetweenEntities failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', targetType: '%s', targetUrn: " +
-                                       "'%s', cause: %s", tenantUrn, sourceType, sourceUrn, targetType, targetUrn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return conversionService.convert(entityPage,
+                                         RelationshipPersistenceUtil.emptyPage()
+                                             .getClass());
     }
 
     /**
@@ -259,26 +211,17 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        try {
-            org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-                relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
-                    UuidUtil.getUuidFromUrn(tenantUrn),
-                    sourceType,
-                    UuidUtil.getUuidFromUrn(sourceUrn),
-                    relationshipType,
-                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
+            relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                sourceType,
+                UuidUtil.getUuidFromUrn(sourceUrn),
+                relationshipType,
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage,
-                                             RelationshipPersistenceUtil.emptyPage()
-                                                 .getClass());
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', relationshipType: '%s'," +
-                                       "cause: '%s'", tenantUrn, sourceType, sourceUrn, relationshipType, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return conversionService.convert(entityPage,
+                                         RelationshipPersistenceUtil.emptyPage()
+                                             .getClass());
     }
 
     /**
@@ -305,26 +248,17 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        try {
-            org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-                relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
-                    UuidUtil.getUuidFromUrn(tenantUrn),
-                    targetType,
-                    UuidUtil.getUuidFromUrn(targetUrn),
-                    relationshipType,
-                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
+            relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                targetType,
+                UuidUtil.getUuidFromUrn(targetUrn),
+                relationshipType,
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage,
-                                             RelationshipPersistenceUtil.emptyPage()
-                                                 .getClass());
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', relationshipType: '%s'," +
-                                       "cause: '%s'", tenantUrn, targetType, targetUrn, relationshipType, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return conversionService.convert(entityPage,
+                                         RelationshipPersistenceUtil.emptyPage()
+                                             .getClass());
     }
 
     /**
@@ -349,25 +283,16 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        try {
-            org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-                relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
-                    UuidUtil.getUuidFromUrn(tenantUrn),
-                    sourceType,
-                    UuidUtil.getUuidFromUrn(sourceUrn),
-                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
+            relationshipRepository.findByTenantIdAndSourceTypeAndSourceId(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                sourceType,
+                UuidUtil.getUuidFromUrn(sourceUrn),
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage,
-                                             RelationshipPersistenceUtil.emptyPage()
-                                                 .getClass());
-
-        } catch (IllegalArgumentException e) {
-            String msg = String.format("findByTypeForSource failed, tenant: '%s', sourceType: '%s', sourceUrn: '%s', " +
-                                       "cause: '%s'", tenantUrn, sourceType, sourceUrn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return conversionService.convert(entityPage,
+                                         RelationshipPersistenceUtil.emptyPage()
+                                             .getClass());
     }
 
     /**
@@ -392,25 +317,16 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        try {
-            org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-                relationshipRepository.findByTenantIdAndTargetTypeAndTargetId(
-                    UuidUtil.getUuidFromUrn(tenantUrn),
-                    targetType,
-                    UuidUtil.getUuidFromUrn(targetUrn),
-                    PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
+            relationshipRepository.findByTenantIdAndTargetTypeAndTargetId(
+                UuidUtil.getUuidFromUrn(tenantUrn),
+                targetType,
+                UuidUtil.getUuidFromUrn(targetUrn),
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
 
-            return conversionService.convert(entityPage,
-                                             RelationshipPersistenceUtil.emptyPage()
-                                                 .getClass());
-
-        } catch (IllegalArgumentException | ConversionException e) {
-            String msg = String.format("findByTypeForSource failed, tenant: '%s', targetType: '%s', targetUrn: '%s', cause: '%s'", tenantUrn,
-                                       targetType, targetUrn, e.toString());
-            log.error(msg);
-            log.debug(msg, e);
-            throw e;
-        }
+        return conversionService.convert(entityPage,
+                                         RelationshipPersistenceUtil.emptyPage()
+                                             .getClass());
     }
 
     /**
