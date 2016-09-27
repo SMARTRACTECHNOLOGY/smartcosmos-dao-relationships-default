@@ -4,7 +4,7 @@
 
 === New Features
 
-No new features are added in this release.
+* OBJECTS-1032 Add Tenant-independent lookups by Relationship type and source/target
 
 === Bugfixes & Improvements
 

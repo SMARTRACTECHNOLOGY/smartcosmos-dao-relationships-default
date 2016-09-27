@@ -38,8 +38,20 @@ public interface RelationshipRepository extends
         String relationshipType,
         Pageable pageable);
 
+    Page<RelationshipEntity> findBySourceTypeAndSourceIdAndRelationshipType(
+        String sourceType,
+        UUID sourceId,
+        String relationshipType,
+        Pageable pageable);
+
     Page<RelationshipEntity> findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
         UUID tenantId,
+        String targetType,
+        UUID targetId,
+        String relationshipType,
+        Pageable pageable);
+
+    Page<RelationshipEntity> findByTargetTypeAndTargetIdAndRelationshipType(
         String targetType,
         UUID targetId,
         String relationshipType,
