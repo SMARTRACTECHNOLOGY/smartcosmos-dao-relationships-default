@@ -7,6 +7,7 @@ import javax.validation.ConstraintViolationException;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -211,13 +212,21 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-            relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage;
+        if (StringUtils.isBlank(tenantUrn)) {
+            entityPage = relationshipRepository.findBySourceTypeAndSourceIdAndRelationshipType(
+                sourceType,
+                UuidUtil.getUuidFromUrn(sourceUrn),
+                relationshipType,
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        } else {
+            entityPage = relationshipRepository.findByTenantIdAndSourceTypeAndSourceIdAndRelationshipType(
                 UuidUtil.getUuidFromUrn(tenantUrn),
                 sourceType,
                 UuidUtil.getUuidFromUrn(sourceUrn),
                 relationshipType,
                 PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        }
 
         return conversionService.convert(entityPage,
                                          RelationshipPersistenceUtil.emptyPage()
@@ -248,13 +257,21 @@ public class RelationshipPersistenceService implements RelationshipDao {
         SortOrder sortOrder,
         String sortBy) {
 
-        org.springframework.data.domain.Page<RelationshipEntity> entityPage =
-            relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
+        org.springframework.data.domain.Page<RelationshipEntity> entityPage;
+        if (StringUtils.isBlank(tenantUrn)) {
+            entityPage = relationshipRepository.findByTargetTypeAndTargetIdAndRelationshipType(
+                targetType,
+                UuidUtil.getUuidFromUrn(targetUrn),
+                relationshipType,
+                PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        } else {
+            entityPage = relationshipRepository.findByTenantIdAndTargetTypeAndTargetIdAndRelationshipType(
                 UuidUtil.getUuidFromUrn(tenantUrn),
                 targetType,
                 UuidUtil.getUuidFromUrn(targetUrn),
                 relationshipType,
                 PageableUtil.buildPageable(page, size, sortOrder, sortBy));
+        }
 
         return conversionService.convert(entityPage,
                                          RelationshipPersistenceUtil.emptyPage()
